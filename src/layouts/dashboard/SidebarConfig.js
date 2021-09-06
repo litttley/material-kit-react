@@ -13,6 +13,11 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 
 const sidebarConfig = [
   {
+    title: '笔记',
+    path: '/blog/list',
+    icon: getIcon(fileTextFill)
+  },
+  {
     title: 'dashboard',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
@@ -28,7 +33,7 @@ const sidebarConfig = [
     icon: getIcon(shoppingBagFill)
   },
   {
-    title: 'blog',
+    title: 'blog1',
     path: '/dashboard/blog',
     icon: getIcon(fileTextFill)
   },

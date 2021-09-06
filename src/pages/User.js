@@ -32,10 +32,10 @@ import USERLIST from '../_mocks_/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'name', label: '标题', alignRight: false },
+  { id: 'company', label: '更新次数', alignRight: false },
+  { id: 'role', label: '修改次数', alignRight: false },
+  { id: 'isVerified', label: '更新时间', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
@@ -132,19 +132,19 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="User | Minimal-UI">
+    <Page title="我的笔记">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            笔记列表
           </Typography>
           <Button
             variant="contained"
             component={RouterLink}
-            to="#"
+            to="/blog/add"
             startIcon={<Icon icon={plusFill} />}
           >
-            New User
+            新建笔记
           </Button>
         </Stack>
 

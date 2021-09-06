@@ -19,13 +19,13 @@ const SORT_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function Blog() {
+export default function MyBlog() {
   return (
-    <Page title="Dashboard: Blog | Minimal-UI">
+    <Page title="Dashboard: MyBlog | Minimal-UI">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Blog1
+            Blog
           </Typography>
           <Button
             variant="contained"
