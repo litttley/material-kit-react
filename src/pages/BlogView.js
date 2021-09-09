@@ -52,12 +52,12 @@ export default function BlogView() {
         console.log(response);
         if (response.data.code === 200) {
           // eslint-disable-next-line camelcase
-          const { id, title, content, blog_moudle, updatedAt } = response.data.data;
+          const { id, title, content, blog_moudle, updated_at } = response.data.data;
           setBid(id);
           setTitle(title);
           setMoudle(blog_moudle);
           setContent(content);
-          setUpdatedAt(updatedAt);
+          setUpdatedAt(updated_at);
         }
       })
       .catch((error) => {
@@ -82,7 +82,7 @@ export default function BlogView() {
 
           <Grid item xs={12} sm={12} md={12}>
             <Label>
-              模块:{moudle}&nbsp;&nbsp;&nbsp;&nbsp; 更新时间:{updatedAt}
+              模块:&nbsp;&nbsp;{moudle}&nbsp;&nbsp;&nbsp;&nbsp; 更新时间:&nbsp;&nbsp;{updatedAt}
             </Label>
           </Grid>
 
