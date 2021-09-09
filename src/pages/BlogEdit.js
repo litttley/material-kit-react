@@ -11,8 +11,8 @@ import {
   Typography
 } from '@material-ui/core';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import Page from '../components/Page';
 import { EditorDemo } from '../utils/MdEditor';
@@ -50,10 +50,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function BlogAdd() {
+export default function BlogEdit() {
+  console.log('BlogEdit');
+  const { pathname, search, hash, state, key } = useLocation();
+  console.log(state);
   const navigate = useNavigate();
   /* state */
   const [moudle, setMoudle] = useState('');
+  const [content, setContent] = useState('');
+  const [bid, setBid] = useState(state.bid);
+  const [title, setTitle] = useState('');
+
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
     severity: 'success', // 可选:error warning info success
@@ -70,12 +77,36 @@ export default function BlogAdd() {
   const markdownContentRef = React.useRef();
   const snackRef = React.useRef();
   /* function */
+  const getData = () => {
+    axios
+      .post('/api/geteditmkdown', {
+        bid: `${bid}`
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          // eslint-disable-next-line camelcase
+          const { id, title, content, blog_moudle } = response.data.data;
+          setBid(id);
+          setTitle(title);
+          setMoudle(blog_moudle);
+          setContent(content);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    console.log('BlogEdit =>useEffect');
+    getData();
+  }, [bid]);
   const snackBarToasr = (ref, message) => {
     setsnackBarMessage(message);
     ref.current();
   };
   const submit = () => {
-    /* alert(moudle);
+    /*  alert(moudle);
     alert(markdownContentRef.current());
     alert(inputRef.current.value); */
     console.log('console.log(inputRef);');
@@ -138,8 +169,9 @@ export default function BlogAdd() {
     <>
       <Page title="添加笔记" className={classes.root}>
         <Grid container spacing={3}>
-          <Grid item xs={10} sm={10} md={10}>
+          <Grid item xs={12} sm={12} md={12}>
             <TextField
+              value={title}
               inputRef={inputRef}
               id="standard-textarea"
               label="标题"
@@ -150,7 +182,7 @@ export default function BlogAdd() {
             />
           </Grid>
 
-          <Grid item xs={2} sm={2} md={2}>
+          <Grid item xs={12} sm={12} md={12}>
             <Button onClick={submit} variant="outlined" color="primary" className={classes.button}>
               保存
             </Button>
@@ -161,6 +193,7 @@ export default function BlogAdd() {
               <FormLabel component="legend">选择分类</FormLabel>
               <RadioGroup row aria-label="position" name="position">
                 <FormControlLabel
+                  checked={moudle === 'rust'}
                   inputRef={radioRef}
                   value="rust"
                   control={<Radio color="primary" />}
@@ -169,6 +202,7 @@ export default function BlogAdd() {
                   onChange={radioChange}
                 />
                 <FormControlLabel
+                  checked={moudle === 'java'}
                   inputRef={radioRef}
                   value="java"
                   control={<Radio color="primary" />}
@@ -177,6 +211,7 @@ export default function BlogAdd() {
                   onChange={radioChange}
                 />
                 <FormControlLabel
+                  checked={moudle === 'python'}
                   inputRef={radioRef}
                   value="python"
                   control={<Radio color="primary" />}
@@ -184,8 +219,8 @@ export default function BlogAdd() {
                   labelPlacement="start"
                   onChange={radioChange}
                 />
-
                 <FormControlLabel
+                  checked={moudle === 'linux'}
                   inputRef={radioRef}
                   value="linux"
                   control={<Radio color="primary" />}
@@ -193,8 +228,8 @@ export default function BlogAdd() {
                   labelPlacement="start"
                   onChange={radioChange}
                 />
-
                 <FormControlLabel
+                  checked={moudle === 'sql'}
                   inputRef={radioRef}
                   value="sql"
                   control={<Radio color="primary" />}
@@ -202,8 +237,8 @@ export default function BlogAdd() {
                   labelPlacement="start"
                   onChange={radioChange}
                 />
-
                 <FormControlLabel
+                  checked={moudle === 'other'}
                   inputRef={radioRef}
                   value="other"
                   control={<Radio color="primary" />}
@@ -215,7 +250,7 @@ export default function BlogAdd() {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={12} md={12} className={classes.simpleMDGrid}>
-            <EditorDemo markdownContentRef={markdownContentRef} />
+            <EditorDemo markdownContentRef={markdownContentRef} content={content} />
           </Grid>
         </Grid>
       </Page>

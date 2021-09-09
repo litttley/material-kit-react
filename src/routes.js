@@ -1,5 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
+import { TablePagination } from '@material-ui/core';
+import React from 'react';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import MyBlogLayout from './layouts/MyBlogLayout';
@@ -15,6 +17,9 @@ import User from './pages/User';
 import NotFound from './pages/Page404';
 
 import BlogAdd from './pages/BlogAdd';
+import BlogEdit from './pages/BlogEdit';
+import BlogView from './pages/BlogView';
+import IconButton from './theme/overrides/IconButton';
 
 // ----------------------------------------------------------------------
 
@@ -33,10 +38,13 @@ export default function Router() {
       ]
     },
     {
-      path: '/s',
+      path: '/login',
       element: <LogoOnlyLayout />,
       children: [
-        { path: 'login', element: <Login /> },
+        {
+          path: '/',
+          element: <Login />
+        },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '/s', element: <Navigate to="/dashboard" /> },
@@ -49,7 +57,9 @@ export default function Router() {
       element: <MyBlogLayout />,
       children: [
         { path: 'list', element: <User /> },
-        { path: 'add', element: <BlogAdd /> }
+        { path: 'add', element: <BlogAdd /> },
+        { path: 'edit', element: <BlogEdit /> },
+        { path: 'view', element: <BlogView /> }
       ]
     },
 
