@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%'
   },
   simpleMDGrid: {
-    paddingBottom: '0px'
+    paddingBottom: '20px'
   },
   title: { width: '100%', color: '#808080' }
 }));
@@ -86,7 +86,7 @@ export default function BlogView() {
             </Label>
           </Grid>
 
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid item xs={12} sm={12} md={12} className={classes.simpleMDGrid}>
             <MdParse mdContent={content} />
           </Grid>
         </Grid>

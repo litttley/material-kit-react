@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { Grid } from '@material-ui/core';
@@ -24,7 +24,8 @@ export const EditorDemo = (props) => {
     })); */
 
   const snackRef = React.useRef();
-  const [value, setValue] = useState(props.content);
+  const [value, setValue] = useState('');
+
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
     severity: 'success', // 可选:error warning info success
@@ -53,85 +54,15 @@ export const EditorDemo = (props) => {
     setsnackBarMessage(message);
     ref.current();
   };
-  // 上传成功响应
-  const uploadComplete = (evt) => {
-    // 服务断接收完文件返回的结果
-
-    const data = JSON.parse(evt.target.responseText);
-    if (data.success) {
-      const imgUrl = `\n![image](/api/${data.url})\r\n`;
-      setValue(value + imgUrl);
-      //   CodeMirror.Doc.replaceSelection(' ![image](" + data.url + ")\\r\\n ');
-
-      snackBarToasr(snackRef, {
-        message: '图片上传成功!',
-        severity: 'success',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    } else {
-      snackBarToasr(snackRef, {
-        message: '图片上传失败!',
-        severity: 'error',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    }
-  };
-
-  // 上传失败
-  const uploadFailed = () => {
-    snackBarToasr(snackRef, {
-      message: '图片上传失败!',
-      severity: 'error',
-      anchorOrigin: {
-        // 位置
-        vertical: 'top',
-        horizontal: 'center'
-      }
-    });
-  };
 
   const pasteEvent = (evt) => {
-    console.log('patsteevent');
-    const { clipboardData } = evt.nativeEvent;
-    if (!(clipboardData && clipboardData.items)) return;
-
-    // 判断图片类型的正则
-    const isImage = /.jpg$|.jpeg$|.png$|.gif$/i;
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0, { length } = clipboardData.items; i < length; i++) {
-      const item = clipboardData.items[i];
-      if (item.kind === 'file' && isImage.test(item.type)) {
-        const img = item.getAsFile();
-        // 服务器地址
-        // var url='http://localhost/uploadimg?guid=1564673641404';
-        const url = `/api/uploadimg?guid=1564673641404`;
-        const formData = new FormData();
-        // 将得到的图片文件添加到FormData
-        formData.append('file', img);
-
-        // 上传图片
-        const xhr = new XMLHttpRequest();
-        // 上传结束
-        xhr.open('POST', url, true);
-        xhr.onload = uploadComplete; // 请求完成
-        xhr.onerror = uploadFailed; // 请求失败
-        xhr.send(formData);
-        // 当剪贴板里是图片时，禁止默认的粘贴
-        return false;
-      }
-    }
+    props.imagePast(evt);
   };
   const onChange = (value) => {
-    setValue(value);
+    // setValue(value);
+    props.childValueChange(value);
   };
+
   props.markdownContentRef.current = () => value;
   const userOptions = useMemo(
     () => ({

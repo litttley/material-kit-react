@@ -25,7 +25,7 @@ export default function UserMoreMenu(props) {
       .then((response) => {
         console.log(response);
         if (response.data.code === 200) {
-          setTimeout(() => props.refresh(true), 3000);
+          setTimeout(() => props.refresh(true), 1000);
         }
       })
       .catch((error) => {

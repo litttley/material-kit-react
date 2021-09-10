@@ -208,7 +208,7 @@ export default function User() {
               horizontal: 'center'
             }
           });
-          setTimeout(() => navigate('/login', { replace: true }), 3000);
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
         }
       });
   };

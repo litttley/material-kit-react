@@ -77,7 +77,7 @@ export default function LoginForm() {
                 horizontal: 'center'
               }
             });
-            setTimeout(() => navigate('/blog/list', { replace: true }), 3000);
+            setTimeout(() => navigate('/blog/list', { replace: true }), 1000);
           } else {
             snackBarToasr(snackRef, {
               message: response.data.msg,

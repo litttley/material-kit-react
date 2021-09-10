@@ -67,7 +67,7 @@ export default function RegisterForm() {
                 horizontal: 'center'
               }
             });
-            setTimeout(() => navigate('/login', { replace: true }), 3000);
+            setTimeout(() => navigate('/login', { replace: true }), 1000);
           } else {
             snackBarToasr(snackRef, {
               message: response.data.msg,
