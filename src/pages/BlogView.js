@@ -45,7 +45,7 @@ export default function BlogView() {
   const classes = useStyles();
   const getData = () => {
     axios
-      .post('/api/getmkdown', {
+      .post('/getmkdown', {
         bid: `${bid}`
       })
       .then((response) => {

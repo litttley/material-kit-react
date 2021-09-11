@@ -52,7 +52,7 @@ export default function RegisterForm() {
 
     onSubmit: () => {
       axios
-        .post('/api/signup', {
+        .post('/signup', {
           ...formik.values
         })
         .then((response) => {

@@ -62,12 +62,12 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: () => {
       axios
-        .post('/api/signin', {
+        .post('/signin', {
           ...formik.values
         })
         .then((response) => {
           console.log(response);
-          if (response.data.code === 200) {
+          if (response.data !== null && response.data !== undefined && response.data.code === 200) {
             snackBarToasr(snackRef, {
               message: '登录成功!',
               severity: 'success',

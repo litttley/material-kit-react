@@ -174,7 +174,7 @@ export default function User() {
 
   const getData = () => {
     axios
-      .post('/api/bloglistcontent', {
+      .post('/bloglistcontent', {
         page, // 第几页
         rows_per_page: rowsPerPage,
         blogMoudle: ''
@@ -198,7 +198,11 @@ export default function User() {
         }
       })
       .catch((error) => {
-        if (error.response.status === 401) {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
           snackBarToasr(snackRef, {
             message: '密码过期请重新登录!',
             severity: 'error',

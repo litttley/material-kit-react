@@ -82,8 +82,7 @@ export default function BlogEdit() {
 
     const data = JSON.parse(evt.target.responseText);
     if (data.success === 1) {
-      const imgUrl = `\n![image](/api${data.url})\r\n`;
-
+      const imgUrl = `\n![image](${data.url})\r\n`;
       setContent(content + imgUrl);
 
       //   CodeMirror.Doc.replaceSelection(' ![image](" + data.url + ")\\r\\n ');
@@ -136,15 +135,18 @@ export default function BlogEdit() {
         const img = item.getAsFile();
         // 服务器地址
         // var url='http://localhost/uploadimg?guid=1564673641404';
-        const url = `/api/uploadimg?guid=1564673641404`;
+        const { baseURL } = axios.defaults;
+        const url = `${baseURL}/uploadimg?guid=1564673641404`;
         const formData = new FormData();
         // 将得到的图片文件添加到FormData
         formData.append('file', img);
 
         // 上传图片
         const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
         // 上传结束
         xhr.open('POST', url, true);
+
         xhr.onload = uploadComplete; // 请求完成
         xhr.onerror = uploadFailed; // 请求失败
         xhr.send(formData);
@@ -157,7 +159,7 @@ export default function BlogEdit() {
   /* function */
   const getData = () => {
     axios
-      .post('/api/geteditmkdown', {
+      .post('/geteditmkdown', {
         bid: `${bid}`
       })
       .then((response) => {
@@ -202,7 +204,7 @@ export default function BlogEdit() {
     console.log('dataValue');
     console.log(dataValue);
     axios
-      .post('/api/blogeditsave', {
+      .post('/blogeditsave', {
         ...dataValue
       })
       .then((response) => {

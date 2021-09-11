@@ -83,7 +83,6 @@ export default function BlogAdd() {
     console.log(inputRef);
     const dataValue = {
       blogid: '',
-      userid: '',
       content,
       content_html: '',
       title: inputRef.current.value,
@@ -91,7 +90,7 @@ export default function BlogAdd() {
     };
 
     axios
-      .post('/api/blogsave', {
+      .post('/blogsave', {
         ...dataValue
       })
       .then((response) => {
@@ -146,7 +145,7 @@ export default function BlogAdd() {
 
     const data = JSON.parse(evt.target.responseText);
     if (data.success === 1) {
-      const imgUrl = `\n![image](/api${data.url})\r\n`;
+      const imgUrl = `\n![image](${data.url})\r\n`;
 
       setContent(content + imgUrl);
 
@@ -200,7 +199,7 @@ export default function BlogAdd() {
         const img = item.getAsFile();
         // 服务器地址
         // var url='http://localhost/uploadimg?guid=1564673641404';
-        const url = `/api/uploadimg?guid=1564673641404`;
+        const url = `/uploadimg?guid=1564673641404`;
         const formData = new FormData();
         // 将得到的图片文件添加到FormData
         formData.append('file', img);

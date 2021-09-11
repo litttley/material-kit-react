@@ -19,7 +19,7 @@ export default function UserMoreMenu(props) {
 
   const deleteClick = () => {
     axios
-      .post('/api/blogdelete', {
+      .post('/blogdelete', {
         bid: `${props.id}`
       })
       .then((response) => {
