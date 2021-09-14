@@ -19,6 +19,7 @@ import NotFound from './pages/Page404';
 import BlogAdd from './pages/BlogAdd';
 import BlogEdit from './pages/BlogEdit';
 import BlogView from './pages/BlogView';
+import Translation from './pages/tools/Translation';
 import IconButton from './theme/overrides/IconButton';
 
 // ----------------------------------------------------------------------
@@ -53,19 +54,20 @@ export default function Router() {
     },
 
     {
-      path: '/blog',
+      path: '/index',
       element: <MyBlogLayout />,
       children: [
-        { path: 'list', element: <User /> },
-        { path: 'add', element: <BlogAdd /> },
-        { path: 'edit', element: <BlogEdit /> },
-        { path: 'view', element: <BlogView /> }
+        { path: '/blog/list', element: <User /> },
+        { path: '/blog/add', element: <BlogAdd /> },
+        { path: '/blog/edit', element: <BlogEdit /> },
+        { path: '/blog/view', element: <BlogView /> },
+        { path: '/tools/translation', element: <Translation /> }
       ]
     },
 
     {
       path: '/',
-      element: <Navigate to="/blog" />
+      element: <Navigate to="/index" />
     },
 
     { path: '*', element: <Navigate to="/404" replace /> }

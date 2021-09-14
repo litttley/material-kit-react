@@ -91,9 +91,9 @@ function NavItem({ item, active }) {
         </ListItemStyle>
 
         <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+          <List component="div" disablePadding sx={{ margin: '0 20px' }}>
             {children.map((item) => {
-              const { title, path } = item;
+              const { title, path, icon } = item;
               const isActiveSub = active(path);
 
               return (
@@ -106,7 +106,8 @@ function NavItem({ item, active }) {
                   }}
                 >
                   <ListItemIconStyle>
-                    <Box
+                    {icon && icon}
+                    {/*   <Box
                       component="span"
                       sx={{
                         width: 4,
@@ -122,8 +123,9 @@ function NavItem({ item, active }) {
                           bgcolor: 'primary.main'
                         })
                       }}
-                    />
+                    /> */}
                   </ListItemIconStyle>
+
                   <ListItemText disableTypography primary={title} />
                 </ListItemStyle>
               );

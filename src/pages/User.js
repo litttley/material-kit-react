@@ -313,7 +313,7 @@ export default function User() {
             <Button
               variant="contained"
               component={RouterLink}
-              to="/blog/add"
+              to="/index/blog/add"
               startIcon={<Icon icon={plusFill} />}
             >
               新建笔记

@@ -219,7 +219,7 @@ export default function BlogEdit() {
               horizontal: 'center'
             }
           });
-          setTimeout(() => navigate('/blog/list', { replace: true }), 1000);
+          setTimeout(() => navigate('/index/blog/list', { replace: true }), 1000);
         } else {
           snackBarToasr(snackRef, {
             message: response.data.msg,

@@ -3,6 +3,8 @@ import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
+import toolFill from '@iconify/icons-ant-design/tool-fill';
+import transaction from '@iconify/icons-ant-design/transaction';
 import lockFill from '@iconify/icons-eva/lock-fill';
 import personAddFill from '@iconify/icons-eva/person-add-fill';
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
@@ -14,8 +16,20 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 const sidebarConfig = [
   {
     title: '笔记',
-    path: '/blog/list',
+    path: '/index/blog/list',
     icon: getIcon(fileTextFill)
+  },
+  {
+    title: '工具',
+    path: '',
+    icon: getIcon(toolFill),
+    children: [
+      {
+        title: '翻译',
+        path: '/index/tools/translation',
+        icon: getIcon(transaction)
+      }
+    ]
   },
   {
     title: 'dashboard',

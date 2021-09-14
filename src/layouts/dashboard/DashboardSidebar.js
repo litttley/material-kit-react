@@ -115,7 +115,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             target="_blank"
             variant="contained"
           >
-            Upgrade to Pro
+            更新到最新
           </Button>
         </Stack>
       </Box>

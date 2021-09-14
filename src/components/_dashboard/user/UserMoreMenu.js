@@ -34,11 +34,11 @@ export default function UserMoreMenu(props) {
   };
 
   const editClick = () => {
-    navigate('/blog/edit', { state: { bid: props.id } }, { replace: true });
+    navigate('/index/blog/edit', { state: { bid: props.id } }, { replace: true });
   };
 
   const viewClick = () => {
-    navigate('/blog/view', { state: { bid: props.id } }, { replace: true });
+    navigate('/index/blog/view', { state: { bid: props.id } }, { replace: true });
   };
 
   return (
