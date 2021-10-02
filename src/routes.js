@@ -20,6 +20,7 @@ import BlogAdd from './pages/BlogAdd';
 import BlogEdit from './pages/BlogEdit';
 import BlogView from './pages/BlogView';
 import Translation from './pages/tools/Translation';
+import PdfReader from './pages/tools/PdfReader';
 import IconButton from './theme/overrides/IconButton';
 
 // ----------------------------------------------------------------------
@@ -61,7 +62,8 @@ export default function Router() {
         { path: '/blog/add', element: <BlogAdd /> },
         { path: '/blog/edit', element: <BlogEdit /> },
         { path: '/blog/view', element: <BlogView /> },
-        { path: '/tools/translation', element: <Translation /> }
+        /* { path: '/tools/translation', element: <Translation /> }, */
+        { path: '/reader', element: <PdfReader /> }
       ]
     },
 

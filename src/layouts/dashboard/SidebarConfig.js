@@ -32,6 +32,11 @@ const sidebarConfig = [
     ]
   },
   {
+    title: '读书',
+    path: '/index/reader',
+    icon: getIcon(fileTextFill)
+  },
+  {
     title: 'dashboard',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
@@ -61,6 +66,7 @@ const sidebarConfig = [
     path: '/register',
     icon: getIcon(personAddFill)
   },
+
   {
     title: 'Not found',
     path: '/404',
