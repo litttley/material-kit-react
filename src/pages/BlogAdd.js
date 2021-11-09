@@ -83,6 +83,7 @@ export default function BlogAdd() {
     console.log(inputRef);
     const dataValue = {
       blogid: '',
+      userid: '',
       content,
       content_html: '',
       title: inputRef.current.value,

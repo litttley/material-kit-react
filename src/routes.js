@@ -43,10 +43,10 @@ export default function Router() {
       path: '/login',
       element: <LogoOnlyLayout />,
       children: [
-        // {
-        //   path: '/',
-        //   element: <Login />
-        // },
+        {
+          path: '',
+          element: <Login />
+        },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         // { path: '/s', element: <Navigate to="/dashboard" /> },
