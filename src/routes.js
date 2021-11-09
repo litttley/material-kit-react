@@ -31,7 +31,7 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { path: '/s', element: <Navigate to="/dashboard/app" replace /> },
+        // { path: '/s', element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
         { path: 'products', element: <Products /> },
@@ -43,13 +43,13 @@ export default function Router() {
       path: '/login',
       element: <LogoOnlyLayout />,
       children: [
-        {
-          path: '/',
-          element: <Login />
-        },
+        // {
+        //   path: '/',
+        //   element: <Login />
+        // },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        { path: '/s', element: <Navigate to="/dashboard" /> },
+        // { path: '/s', element: <Navigate to="/dashboard" /> },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     },
@@ -58,12 +58,12 @@ export default function Router() {
       path: '/index',
       element: <MyBlogLayout />,
       children: [
-        { path: '/blog/list', element: <User /> },
-        { path: '/blog/add', element: <BlogAdd /> },
-        { path: '/blog/edit', element: <BlogEdit /> },
-        { path: '/blog/view', element: <BlogView /> },
+        { path: 'index/blog/list', element: <User /> },
+        { path: 'index/blog/add', element: <BlogAdd /> },
+        { path: 'index/blog/edit', element: <BlogEdit /> },
+        { path: 'index/blog/view', element: <BlogView /> },
         /* { path: '/tools/translation', element: <Translation /> }, */
-        { path: '/reader', element: <PdfReader /> }
+        { path: 'index/reader', element: <PdfReader /> }
       ]
     },
 
