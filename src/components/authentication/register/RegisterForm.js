@@ -6,12 +6,13 @@ import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { useNavigate } from 'react-router-dom';
 // material
-import { Stack, TextField, IconButton, InputAdornment } from '@material-ui/core';
-import { LoadingButton } from '@material-ui/lab';
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import CustomizedSnackbars from '../../../utils/CustomizedSnackbars';
+
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {

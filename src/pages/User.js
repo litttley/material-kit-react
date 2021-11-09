@@ -19,7 +19,7 @@ import {
   Typography,
   TableContainer,
   TablePagination
-} from '@material-ui/core';
+} from '@mui/material';
 // components
 import axios from 'axios';
 import faker from 'faker';
