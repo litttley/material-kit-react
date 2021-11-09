@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import WebViewer from '@pdftron/webviewer';
-import { Container } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Container } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({

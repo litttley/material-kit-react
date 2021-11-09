@@ -10,7 +10,6 @@ import axios from 'axios';
 import { sample } from 'lodash';
 import CustomizedSnackbars from '../../../utils/CustomizedSnackbars';
 
-
 // ----------------------------------------------------------------------
 
 export default function UserMoreMenu(props) {

@@ -1,11 +1,29 @@
-import React from 'react';
+import faker from 'faker';
+import { sample } from 'lodash';
+// utils
+import { mockImgAvatar } from '../utils/mockImages';
 
-export default function User() {
-  return (
-    <>
-      <Page title="我的笔记">
-        <div>12123</div>
-      </Page>
-    </>
-  );
-}
+// ----------------------------------------------------------------------
+
+const users = [...Array(24)].map((_, index) => ({
+  id: faker.datatype.uuid(),
+  avatarUrl: mockImgAvatar(index + 1),
+  name: faker.name.findName(),
+  company: faker.company.companyName(),
+  isVerified: faker.datatype.boolean(),
+  status: sample(['active', 'banned']),
+  role: sample([
+    'Leader',
+    'Hr Manager',
+    'UI Designer',
+    'UX Designer',
+    'UI/UX Designer',
+    'Project Manager',
+    'Backend Developer',
+    'Full Stack Designer',
+    'Front End Developer',
+    'Full Stack Developer'
+  ])
+}));
+
+export default users;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/styles';
-import { Container, Grid } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { Container, Grid } from '@mui/material';
 import WebViewer from '@pdftron/webviewer';
 import { connect } from 'react-redux';
 import Page from '../../components/Page';

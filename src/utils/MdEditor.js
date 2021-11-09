@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import marked from 'marked';
 import hljs from 'highlight.js';
 import CustomizedSnackbars from './CustomizedSnackbars';

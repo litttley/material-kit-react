@@ -1,6 +1,4 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-// layouts
-import { TablePagination } from '@material-ui/core';
 import React from 'react';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
@@ -31,7 +29,6 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-
         // { path: '/s', element: <Navigate to="/dashboard/app" replace /> },
 
         { element: <Navigate to="/dashboard/app" replace /> },
@@ -61,12 +58,12 @@ export default function Router() {
       path: '/index',
       element: <MyBlogLayout />,
       children: [
-        { path: 'index/blog/list', element: <User /> },
-        { path: 'index/blog/add', element: <BlogAdd /> },
-        { path: 'index/blog/edit', element: <BlogEdit /> },
-        { path: 'index/blog/view', element: <BlogView /> },
+        { path: 'blog/list', element: <User /> },
+        { path: 'blog/add', element: <BlogAdd /> },
+        { path: 'blog/edit', element: <BlogEdit /> },
+        { path: 'blog/view', element: <BlogView /> },
         /* { path: '/tools/translation', element: <Translation /> }, */
-        { path: 'index/reader', element: <PdfReader /> }
+        { path: 'reader', element: <PdfReader /> }
       ]
     },
 

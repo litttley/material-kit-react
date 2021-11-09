@@ -1,10 +1,10 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import SimpleMDE from 'react-simplemde-editor';
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-import { Container, Typography, Grid } from '@material-ui/core';
+import { Container, Typography, Grid } from '@mui/material';
 import Page from '../components/Page';
 import { MdParse } from '../utils/MdParse';
 import Label from '../components/Label';

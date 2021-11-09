@@ -9,11 +9,11 @@ import {
   Container,
   Grid,
   Typography
-} from '@material-ui/core';
+} from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 import Page from '../components/Page';
 import { EditorDemo } from '../utils/MdEditor';
 import 'braft-editor/dist/index.css';
