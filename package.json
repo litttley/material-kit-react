@@ -49,6 +49,7 @@
     "@mui/material": "^5.0.0",
     "@mui/styles": "^5.1.0",
     "@mui/utils": "^5.0.0",
+    "@mui/x-data-grid": "5.0.0-beta.7",
     "@pdftron/webviewer": "^8.1.0",
     "@testing-library/jest-dom": "^5.14.1",
     "apexcharts": "^3.28.3",

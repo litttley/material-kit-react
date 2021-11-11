@@ -4,6 +4,7 @@ import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import toolFill from '@iconify/icons-ant-design/tool-fill';
+import stockOutLine from '@iconify/icons-ant-design/stock-outline';
 import transaction from '@iconify/icons-ant-design/transaction';
 import lockFill from '@iconify/icons-eva/lock-fill';
 import personAddFill from '@iconify/icons-eva/person-add-fill';
@@ -35,6 +36,12 @@ const sidebarConfig = [
     title: '读书',
     path: '/index/reader',
     icon: getIcon(fileTextFill)
+  },
+
+  {
+    title: '股票',
+    path: '/index/stock',
+    icon: getIcon(stockOutLine)
   },
   {
     title: 'dashboard',
