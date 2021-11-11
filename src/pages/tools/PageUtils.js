@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { filter } from 'lodash';
 import { DataGrid } from '@mui/x-data-grid';
 import {
@@ -17,8 +18,10 @@ import {
   TablePagination
 } from '@mui/material';
 import { height } from '@mui/system';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user';
+import { UserListToolbar } from '../../components/_dashboard/user';
+import UserListHead from './PageTableHead';
 import Scrollbar from '../../components/Scrollbar';
+import ViewEditToolBar from '../../components/ViewEditToolBar';
 import USERLIST from '../../_mocks_/user';
 import SearchNotFound from '../../components/SearchNotFound';
 
@@ -50,26 +53,18 @@ function getComparator(order, orderBy) {
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
-const TABLE_HEAD = [
-  { id: 'title', label: '标题', alignRight: false },
-  { id: 'fileMoudle', label: '模块', alignRight: false },
-  { id: 'updatedTimes', label: '修改次数', alignRight: false },
 
-  { id: 'visitTimes', label: '访问次数', alignRight: false },
-  { id: 'updatedAt', label: '更新时间', alignRight: false }
-];
 function PageUtils(props) {
-  const { rows, columns } = props;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [userList, setUserList] = useState([]);
+  //  const [userList, setUserList] = useState([]);
   const [refrush, setRefrush] = useState(false);
   const [count, setCount] = useState(0);
-
+  const { tableHead, userList } = props;
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -138,15 +133,19 @@ function PageUtils(props) {
           rowsPerPageOptions={[5]}
           checkboxSelection
         /> */}
-
+        <UserListToolbar
+          numSelected={selected.length}
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+        />
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
               <UserListHead
                 order={order}
                 orderBy={orderBy}
-                headLabel={TABLE_HEAD}
-                rowCount={USERLIST.length}
+                headLabel={tableHead}
+                rowCount={userList.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
@@ -193,9 +192,9 @@ function PageUtils(props) {
                         <TableCell align="left">{updatedTimes}</TableCell>
                         <TableCell align="left">{visitTimes}</TableCell>
                         <TableCell align="left">{updatedAt}</TableCell>
-
+                        <TableCell align="left">{props.children}</TableCell>
                         <TableCell align="right">
-                          <UserMoreMenu id={id} refresh={refresh} />
+                          <ViewEditToolBar id={id} refresh={refresh} />
                         </TableCell>
                       </TableRow>
                     );
