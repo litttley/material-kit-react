@@ -268,59 +268,52 @@ export default function User() {
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
-                    {filteredUsers
-                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row) => {
-                        const {
-                          id,
-                          title,
-                          updatedTimes,
-                          visitTimes,
-                          fileMoudle,
-                          avatarUrl,
-                          updatedAt
-                        } = row;
-                        const isItemSelected = selected.indexOf(title) !== -1;
+                    {filteredUsers.map((row) => {
+                      const {
+                        id,
+                        title,
+                        updatedTimes,
+                        visitTimes,
+                        fileMoudle,
+                        avatarUrl,
+                        updatedAt
+                      } = row;
+                      const isItemSelected = selected.indexOf(title) !== -1;
 
-                        return (
-                          <TableRow
-                            hover
-                            key={id}
-                            tabIndex={-1}
-                            role="checkbox"
-                            selected={isItemSelected}
-                            aria-checked={isItemSelected}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                checked={isItemSelected}
-                                onChange={(event) => handleClick(event, title)}
-                              />
-                            </TableCell>
-                            <TableCell component="th" scope="row" padding="none">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={title} src={avatarUrl} />
-                                <Typography variant="subtitle2" noWrap>
-                                  {title}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="left">{fileMoudle}</TableCell>
-                            <TableCell align="left">{updatedTimes}</TableCell>
-                            <TableCell align="left">{visitTimes}</TableCell>
-                            <TableCell align="left">{updatedAt}</TableCell>
+                      return (
+                        <TableRow
+                          hover
+                          key={id}
+                          tabIndex={-1}
+                          role="checkbox"
+                          selected={isItemSelected}
+                          aria-checked={isItemSelected}
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              onChange={(event) => handleClick(event, title)}
+                            />
+                          </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Avatar alt={title} src={avatarUrl} />
+                              <Typography variant="subtitle2" noWrap>
+                                {title}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell align="left">{fileMoudle}</TableCell>
+                          <TableCell align="left">{updatedTimes}</TableCell>
+                          <TableCell align="left">{visitTimes}</TableCell>
+                          <TableCell align="left">{updatedAt}</TableCell>
 
-                            <TableCell align="right">
-                              <UserMoreMenu id={id} refresh={refresh} />
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
+                          <TableCell align="right">
+                            <UserMoreMenu id={id} refresh={refresh} />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                   {isUserNotFound && (
                     <TableBody>

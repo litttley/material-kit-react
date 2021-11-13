@@ -18,12 +18,14 @@ import {
   TablePagination
 } from '@mui/material';
 import { height } from '@mui/system';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { UserListToolbar } from '../../components/_dashboard/user';
 import UserListHead from './PageTableHead';
 import Scrollbar from '../../components/Scrollbar';
 import ViewEditToolBar from '../../components/ViewEditToolBar';
-import USERLIST from '../../_mocks_/user';
 import SearchNotFound from '../../components/SearchNotFound';
+import KlineDialog from './KlineDialog';
 
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
@@ -55,16 +57,94 @@ function getComparator(order, orderBy) {
 }
 
 function PageUtils(props) {
+  const navigate = useNavigate();
+  const tableHead = [
+    { id: 'date', label: '日期', alignRight: false },
+    { id: 'code_name', label: '股票名称', alignRight: false },
+    { id: 'code', label: '股票编码', alignRight: false },
+    { id: 'open', label: '开盘价', alignRight: false },
+    { id: 'close', label: '收盘价', alignRight: false },
+    { id: 'kLine', label: 'k线图', alignRight: false }
+  ];
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  //  const [userList, setUserList] = useState([]);
-  const [refrush, setRefrush] = useState(false);
+
+  const [dataList, setDataList] = useState([]);
+  // const [refrush, setRefrush] = useState(false);
   const [count, setCount] = useState(0);
-  const { tableHead, userList } = props;
+
+  const [snackBarMessage, setsnackBarMessage] = useState({
+    message: '',
+    severity: 'success', // 可选:error warning info success
+    anchorOrigin: {
+      // 位置
+      vertical: 'top',
+      horizontal: 'center'
+    }
+  });
+  const snackRef = React.useRef();
+  /* function */
+  const snackBarToasr = (ref, message) => {
+    setsnackBarMessage(message);
+    ref.current();
+  };
+
+  useEffect(() => {
+    console.log('useEffect');
+    getData();
+  }, [page, rowsPerPage]);
+
+  // useEffect(() => {
+  //   getData();
+  // }, [refrush]);
+  const getData = () => {
+    axios
+      .post('/stockList', {
+        page, // 第几页
+        rows_per_page: rowsPerPage,
+        stockCode: ''
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          const dataArray = response.data.data.remmond_list;
+          const { count } = response.data.data;
+          const newArray = dataArray.map((data) => ({
+            id: data.id,
+            date: data.date,
+            code: data.code,
+            codeName: data.codeName,
+            open: data.open,
+            close: data.close
+          }));
+          setDataList(newArray);
+          setCount(count);
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -79,7 +159,7 @@ function PageUtils(props) {
   };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = userList.map((n) => n.name);
+      const newSelecteds = dataList.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -106,33 +186,28 @@ function PageUtils(props) {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    setDataList([]);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10)); // 每页行数
     setPage(0); // 页数
+    setDataList([]);
   };
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataList.length) : 0;
 
-  const filteredUsers = applySortFilter(userList, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(dataList, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
     <>
-      <Card sx={{ height: 400 }}>
-        {/* <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
-        /> */}
+      <Card>
         <UserListToolbar
           numSelected={selected.length}
           filterName={filterName}
@@ -145,25 +220,17 @@ function PageUtils(props) {
                 order={order}
                 orderBy={orderBy}
                 headLabel={tableHead}
-                rowCount={userList.length}
+                rowCount={dataList.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
                 {filteredUsers
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  //  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    const {
-                      id,
-                      title,
-                      updatedTimes,
-                      visitTimes,
-                      fileMoudle,
-                      avatarUrl,
-                      updatedAt
-                    } = row;
-                    const isItemSelected = selected.indexOf(title) !== -1;
+                    const { id, date, codeName, code, open, close } = row;
+                    const isItemSelected = selected.indexOf(id) !== -1;
 
                     return (
                       <TableRow
@@ -177,33 +244,31 @@ function PageUtils(props) {
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={isItemSelected}
-                            onChange={(event) => handleClick(event, title)}
+                            onChange={(event) => handleClick(event, id)}
                           />
                         </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
+                        {/* <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={title} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {title}
                             </Typography>
                           </Stack>
+                        </TableCell> */}
+                        <TableCell align="left">{date}</TableCell>
+                        <TableCell align="left">{codeName}</TableCell>
+                        <TableCell align="left">{code}</TableCell>
+                        <TableCell align="left">{open}</TableCell>
+                        <TableCell align="left">{close}</TableCell>
+                        <TableCell align="left">
+                          <KlineDialog stockCode={code} />
                         </TableCell>
-                        <TableCell align="left">{fileMoudle}</TableCell>
-                        <TableCell align="left">{updatedTimes}</TableCell>
-                        <TableCell align="left">{visitTimes}</TableCell>
-                        <TableCell align="left">{updatedAt}</TableCell>
-                        <TableCell align="left">{props.children}</TableCell>
                         <TableCell align="right">
                           <ViewEditToolBar id={id} refresh={refresh} />
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
               </TableBody>
               {isUserNotFound && (
                 <TableBody>
@@ -217,6 +282,19 @@ function PageUtils(props) {
             </Table>
           </TableContainer>
         </Scrollbar>
+
+        <TablePagination
+          labelRowsPerPage="显示条数"
+          labelDisplayedRows={({ from, to, count }) => `${from}至${to}共${count}`}
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={count}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          // backiconbuttontext="上一页"
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Card>
     </>
   );
