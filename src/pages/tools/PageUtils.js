@@ -119,7 +119,8 @@ function PageUtils(props) {
             code: data.code,
             codeName: data.codeName,
             open: data.open,
-            close: data.close
+            close: data.close,
+            high: data.high
           }));
           setDataList(newArray);
           setCount(count);
@@ -229,7 +230,7 @@ function PageUtils(props) {
                 {filteredUsers
                   //  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    const { id, date, codeName, code, open, close } = row;
+                    const { id, date, codeName, code, open, close, high } = row;
                     const isItemSelected = selected.indexOf(id) !== -1;
 
                     return (
@@ -261,7 +262,7 @@ function PageUtils(props) {
                         <TableCell align="left">{open}</TableCell>
                         <TableCell align="left">{close}</TableCell>
                         <TableCell align="left">
-                          <KlineDialog stockCode={code} />
+                          <KlineDialog stockCode={code} viewPointX={date} viewPointY={high} />
                         </TableCell>
                         <TableCell align="right">
                           <ViewEditToolBar id={id} refresh={refresh} />
