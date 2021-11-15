@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -59,6 +60,7 @@ const downBorderColor = '#008F28';
 
 /* eslint-disable */
 export default function KlineDialog(props) {
+  const navigate = useNavigate();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [option1, setOption1] = useState(0);
@@ -364,6 +366,7 @@ export default function KlineDialog(props) {
               horizontal: 'center'
             }
           });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
         }
       });
   };

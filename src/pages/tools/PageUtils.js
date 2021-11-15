@@ -26,6 +26,7 @@ import Scrollbar from '../../components/Scrollbar';
 import ViewEditToolBar from '../../components/ViewEditToolBar';
 import SearchNotFound from '../../components/SearchNotFound';
 import KlineDialog from './KlineDialog';
+import CustomizedSnackbars from '../../utils/CustomizedSnackbars';
 
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
@@ -297,6 +298,7 @@ function PageUtils(props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+      <CustomizedSnackbars snackBarMessage={snackBarMessage} ref={snackRef} />
     </>
   );
 }

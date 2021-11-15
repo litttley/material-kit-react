@@ -64,7 +64,7 @@ export default function Router() {
         { path: 'blog/add', element: <BlogAdd /> },
         { path: 'blog/edit', element: <BlogEdit /> },
         { path: 'blog/view', element: <BlogView /> },
-        /* { path: '/tools/translation', element: <Translation /> }, */
+         { path: '/tools/translation', element: <Translation /> }, 
         { path: 'reader', element: <PdfReader /> },
         { path: 'stock', element: <Stock /> }
       ]

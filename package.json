@@ -6,7 +6,7 @@
   "private": false,
   "scripts": {
     "start": "set PORT=9000 && react-scripts start",
-    "build": "react-scripts build && npm run move-static",
+    "build": "react-scripts build ",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.jsx ./src",
@@ -101,5 +101,6 @@
     "eslint-plugin-react": "^7.25.2",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.4.1"
-  }
+  },
+  "homepage": "/static/"
 }
