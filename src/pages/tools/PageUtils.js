@@ -12,14 +12,19 @@ import {
   TableRow,
   TableBody,
   TableCell,
-  Container,
-  Typography,
+  FormControlLabel,
   TableContainer,
-  TablePagination
+  Switch,
+  Box,
+  TablePagination,
+  Paper
 } from '@mui/material';
+
 import { height } from '@mui/system';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { UserListToolbar } from '../../components/_dashboard/user';
 import UserListHead from './PageTableHead';
 import Scrollbar from '../../components/Scrollbar';
@@ -28,34 +33,101 @@ import SearchNotFound from '../../components/SearchNotFound';
 import KlineDialog from './KlineDialog';
 import CustomizedSnackbars from '../../utils/CustomizedSnackbars';
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(16px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+        opacity: 1,
+        border: 0
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5
+      }
+    },
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      color: '#33cf4d',
+      border: '6px solid #fff'
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600]
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: theme.palette.mode === 'light' ? 0.7 : 0.3
+    }
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 22,
+    height: 22
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 26 / 2,
+    backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500
+    })
   }
-  return stabilizedThis.map((el) => el[0]);
-}
+}));
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+const AntSwitch = styled(Switch)(({ theme }) => ({
+  width: 28,
+  height: 16,
+  padding: 0,
+  display: 'flex',
+  '&:active': {
+    '& .MuiSwitch-thumb': {
+      width: 15
+    },
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      transform: 'translateX(9px)'
+    }
+  },
+  '& .MuiSwitch-switchBase': {
+    padding: 2,
+    '&.Mui-checked': {
+      transform: 'translateX(12px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff'
+      }
+    }
+  },
+  '& .MuiSwitch-thumb': {
+    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    transition: theme.transitions.create(['width'], {
+      duration: 200
+    })
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+    boxSizing: 'border-box'
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
+}));
+const Item = styled('div')(({ theme }) => ({
+  // width: theme.spacing(4),
+  ...theme.typography.body2,
+  // paddingLeft: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary
+}));
 
 function PageUtils(props) {
   const navigate = useNavigate();
@@ -65,7 +137,8 @@ function PageUtils(props) {
     { id: 'code', label: '股票编码', alignRight: false },
     { id: 'open', label: '开盘价', alignRight: false },
     { id: 'close', label: '收盘价', alignRight: false },
-    { id: 'kLine', label: 'k线图', alignRight: false }
+    { id: 'kLine', label: 'k线图', alignRight: false },
+    { id: 'stockWatch', label: '加入监听列表', alignRight: false }
   ];
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -75,8 +148,9 @@ function PageUtils(props) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [dataList, setDataList] = useState([]);
-  // const [refrush, setRefrush] = useState(false);
+  const [refrush, setRefrush] = useState(false);
   const [count, setCount] = useState(0);
+  const [stockWatchLabel, setStockWatchLabel] = useState('否');
 
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
@@ -97,17 +171,17 @@ function PageUtils(props) {
   useEffect(() => {
     console.log('useEffect');
     getData();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, filterName]);
 
-  // useEffect(() => {
-  //   getData();
-  // }, [refrush]);
+  useEffect(() => {
+    getData();
+  }, [refrush]);
   const getData = () => {
     axios
       .post('/stockList', {
         page, // 第几页
-        rows_per_page: rowsPerPage,
-        stockCode: ''
+        rowsPerPage,
+        searchValue: filterName
       })
       .then((response) => {
         console.log(response);
@@ -121,10 +195,62 @@ function PageUtils(props) {
             codeName: data.codeName,
             open: data.open,
             close: data.close,
-            high: data.high
+            high: data.high,
+            stockWatchFlag: data.stockWatchFlag
           }));
           setDataList(newArray);
           setCount(count);
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
+  const changeStockWatchFlag = (flag, refRecommendCodeId) => {
+    axios
+      .post('/stockWatch/save', {
+        flag, // 第几页
+        refRecommendCodeId
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200 && response.data.msg === 'ok') {
+          getData();
+          snackBarToasr(snackRef, {
+            message: '操作成功',
+            severity: 'success',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+        } else {
+          snackBarToasr(snackRef, {
+            message: '操作失败',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
         }
       })
       .catch((error) => {
@@ -152,7 +278,7 @@ function PageUtils(props) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  const refresh = (type) => {
+  const refreshPage = (type) => {
     if (type) {
       console.log(1);
     } else {
@@ -196,16 +322,23 @@ function PageUtils(props) {
     setPage(0); // 页数
     setDataList([]);
   };
-
+  // 查询列表
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
+    setPage(0);
+  };
+
+  const stockWatchChange = (flag, stockWatchId) => {
+    // event.currentTarget.labels[0].innerText = checked ? '是' : '否';
+    console.log(stockWatchId);
+    changeStockWatchFlag(flag, stockWatchId);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataList.length) : 0;
 
-  const filteredUsers = applySortFilter(dataList, getComparator(order, orderBy), filterName);
+  // const filteredUsers = applySortFilter(dataList, getComparator(order, orderBy), filterName);
 
-  const isUserNotFound = filteredUsers.length === 0;
+  const isUserNotFound = dataList.length === 0;
 
   return (
     <>
@@ -228,10 +361,10 @@ function PageUtils(props) {
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filteredUsers
+                {dataList
                   //  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    const { id, date, codeName, code, open, close, high } = row;
+                    const { id, date, codeName, code, open, close, high, stockWatchFlag } = row;
                     const isItemSelected = selected.indexOf(id) !== -1;
 
                     return (
@@ -262,11 +395,40 @@ function PageUtils(props) {
                         <TableCell align="left">{code}</TableCell>
                         <TableCell align="left">{open}</TableCell>
                         <TableCell align="left">{close}</TableCell>
+
                         <TableCell align="left">
                           <KlineDialog stockCode={code} viewPointX={date} viewPointY={high} />
                         </TableCell>
+                        <TableCell align="left">
+                          <FormControlLabel
+                            onChange={(event, checked) => {
+                              stockWatchChange(checked ? '1' : '0', id);
+                            }}
+                            control={
+                              <IOSSwitch sx={{ m: 1 }} defaultChecked={stockWatchFlag === '1'} />
+                            }
+                            // checked={stockWatchFlag === '1'}
+                            label={stockWatchFlag === '0' ? '否' : '是'}
+                          />
+                        </TableCell>
+                        {/* <TableCell align="left">
+                          <Stack direction="row" alignItems="center">
+                            <Item>
+                              <AntSwitch inputProps={{ 'aria-label': 'ant design' }} />
+                            </Item>
+                            <Item>
+                              <TextField id="input-with-sx" label="With sx" variant="standard" />
+                            </Item>
+                            <Item>
+                              <AntSwitch inputProps={{ 'aria-label': 'ant design' }} />
+                            </Item>
+                            <Item>
+                              <TextField id="input-with-sx" label="With sx" variant="standard" />
+                            </Item>
+                          </Stack>
+                        </TableCell> */}
                         <TableCell align="right">
-                          <ViewEditToolBar id={id} refresh={refresh} />
+                          <ViewEditToolBar id={id} refresh={refreshPage} />
                         </TableCell>
                       </TableRow>
                     );
