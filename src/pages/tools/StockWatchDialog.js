@@ -121,14 +121,14 @@ const Item = styled('div')(({ theme }) => ({
 
 export default function StockWatchDialog(props) {
   const navigate = useNavigate();
-  const { id, refPrice, title, type, closedStatus, prevPrice } = props;
+  const { id, refPrice, title, type, closed, prevPrice, dialogRef } = props;
   const [open, setOpen] = React.useState(false);
   const [inputPrice, setInputPrice] = React.useState(0.0);
   const [inputPercent, setInputPercent] = React.useState(0);
   const [inputPriceVaild, setInputPriceVaild] = React.useState(false);
   const [inputPercentVaild, setinputPercentVaild] = React.useState(false);
   const [finallValue, setFinallValue] = React.useState(0.0);
-  const [closeStatus, setCloseStatus] = React.useState(closedStatus);
+  const [closeStatus, setCloseStatus] = React.useState(closed);
 
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
@@ -153,30 +153,31 @@ export default function StockWatchDialog(props) {
   const handleClose = () => {
     setOpen(false);
     changeStockWatchFlag();
+    dialogRef();
   };
   const handleClose2 = () => {
     setOpen(false);
   };
   const changeStockWatchFlag = () => {
-    if (finallValue <= 0) {
-      setOpen(false);
-      snackBarToasr(snackRef, {
-        message: '价格设置不能为空!',
-        severity: 'error',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-      return;
-    }
+    // if (finallValue <= 0&& closed===closeStatus) {
+    //   setOpen(false);
+    //   snackBarToasr(snackRef, {
+    //     message: '价格设置不能为空!',
+    //     severity: 'error',
+    //     anchorOrigin: {
+    //       // 位置
+    //       vertical: 'top',
+    //       horizontal: 'center'
+    //     }
+    //   });
+    //   return;
+    // }
     axios
       .post('/stockWatch/update', {
         closeStatus, // 第几页
         id,
         type,
-        price: finallValue
+        price: finallValue <= 0 ? '' : `${finallValue}`
       })
       .then((response) => {
         console.log(response);
@@ -265,7 +266,7 @@ export default function StockWatchDialog(props) {
   return (
     <>
       <Button variant="outlined" onClick={handleClickOpen}>
-        股票监听
+        股价监听
       </Button>
       <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose2}>

@@ -38,10 +38,10 @@ function StockWatch(props) {
     { id: 'code', label: '股票编码', alignRight: false },
     { id: 'refClose', label: '参考价', alignRight: false },
     { id: 'updateAt', label: '更新日期', alignRight: false },
-    { id: 'buyPrice', label: '买入价格', alignRight: false },
-    { id: 'buyWatch', label: '买入监听', alignRight: false },
-    { id: 'sellPrice', label: '卖出价格', alignRight: false },
-    { id: 'sellWatch', label: '卖出监听', alignRight: false }
+    { id: 'buyPrice', label: '涨幅价格', alignRight: false },
+    { id: 'buyWatch', label: '涨幅监听', alignRight: false },
+    { id: 'sellPrice', label: '跌幅价格', alignRight: false },
+    { id: 'sellWatch', label: '跌幅监听', alignRight: false }
   ];
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -52,8 +52,15 @@ function StockWatch(props) {
 
   const [dataList, setDataList] = useState([]);
   const [refrush, setRefrush] = useState(false);
+  const [refrush2, setRefrush2] = useState(0);
   const [count, setCount] = useState(0);
   const [stockWatchLabel, setStockWatchLabel] = useState('否');
+  // const dialogRef = React.useRef();
+  const dialogRef = () => {
+    let value = refrush2;
+
+    setRefrush2(Object.assign((value += 1)));
+  };
 
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
@@ -78,7 +85,7 @@ function StockWatch(props) {
 
   useEffect(() => {
     getData();
-  }, [refrush]);
+  }, [refrush, refrush2]);
   const getData = () => {
     axios
       .post('/stockWatch/list', {
@@ -246,27 +253,39 @@ function StockWatch(props) {
                           <TableCell align="left">{code}</TableCell>
                           <TableCell align="left">{refPrice}</TableCell>
                           <TableCell align="left">{updatedAt}</TableCell>
-                          <TableCell align="left">{updatedAt}</TableCell>
+                          <TableCell
+                            align="left"
+                            style={{ color: buyClosed === 'O' ? '#fb7600' : '#212B36' }}
+                          >
+                            {buyPirce}
+                          </TableCell>
 
                           <TableCell align="left">
                             <StockWatchDialog
                               id={id}
                               refPrice={refPrice}
-                              title="买入监听设置"
+                              title="涨幅监听设置"
                               type={1}
-                              closedStatus={buyClosed}
+                              closed={buyClosed}
                               prevPrice={buyPirce}
+                              dialogRef={dialogRef}
                             />
                           </TableCell>
-                          <TableCell align="left">{updatedAt}</TableCell>
+                          <TableCell
+                            align="left"
+                            style={{ color: sellClosed === 'O' ? '#fb7600' : '#212B36' }}
+                          >
+                            {sellPirce}
+                          </TableCell>
                           <TableCell align="left">
                             <StockWatchDialog
                               id={id}
                               refPrice={refPrice}
-                              title="卖出监听设置"
+                              title="跌幅监听设置"
                               type={0}
-                              closedStatus={sellClosed}
+                              closed={sellClosed}
                               prevPrice={sellPirce}
+                              dialogRef={dialogRef}
                             />
                           </TableCell>
                           <TableCell align="right">
