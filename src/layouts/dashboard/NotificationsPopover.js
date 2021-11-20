@@ -1,7 +1,7 @@
 import faker from 'faker';
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { set, sub, formatDistanceToNow } from 'date-fns';
 import { Icon } from '@iconify/react';
@@ -30,7 +30,7 @@ import { mockImgAvatar } from '../../utils/mockImages';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
-
+import { ReactWebsocket } from '../../utils/ReactWebsocket ';
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
@@ -169,8 +169,12 @@ function NotificationItem({ notification }) {
 export default function NotificationsPopover() {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+
+  const [wsUrl, setWsUrl] = useState('ws://localhost/ws/');
+
+  const totalUnRead = 4;
 
   const handleOpen = () => {
     setOpen(true);
@@ -217,7 +221,7 @@ export default function NotificationsPopover() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              你有 {totalUnRead} 未读消息
             </Typography>
           </Box>
 

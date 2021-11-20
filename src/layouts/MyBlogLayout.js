@@ -1,12 +1,15 @@
+import React, { useRef, useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 import DashboardNavbar from './dashboard/DashboardNavbar';
 import DashboardSidebar from './dashboard/DashboardSidebar';
 import { hiddenAction } from '../action';
+import CustomizedSnackbars from '../utils/CustomizedSnackbars';
+import ReactWebsocket from '../utils/ReactWebsocket ';
 
 const APP_BAR_MOBILE = 64;
 const APP_BAR_DESKTOP = 92;
@@ -35,23 +38,88 @@ function MyBlogLayout(props) {
 
   const { newState } = props;
   const [open, setOpen] = useState(false);
-  const [chipLabel, setChipLabel] = useState('展开');
+  const [chipLabel, setChipLabel] = useState(true);
   const [isDisplayDashboardNavbar, setIsDisplayDashboardNavbar] = useState(false);
+  const [wbSocketClosed, setWebSocketClosed] = useState(true);
   console.log(newState.isDisplay);
   const handleClick = () => {
-    const value = chipLabel === '展 开' ? '收 起' : '展 开';
+    const value = !chipLabel;
     setChipLabel(value);
   };
+
+  // 消息提示
+  const [snackBarMessage, setsnackBarMessage] = useState({
+    message: '',
+    severity: 'success', // 可选:error warning info success
+    anchorOrigin: {
+      // 位置
+      vertical: 'top',
+      horizontal: 'center'
+    }
+  });
+  const snackRef = React.useRef();
+  /* function */
+  const snackBarToasr = (ref, message) => {
+    setsnackBarMessage(message);
+    ref.current();
+  };
+
+  // websocket
+
+  const [wsUrl, setWsUrl] = useState('ws://localhost/ws/');
+
+  const wsOnMessage = (data) => {
+    snackBarToasr(snackRef, {
+      message: 'websock消息提醒',
+      severity: 'success',
+      anchorOrigin: {
+        // 位置
+        vertical: 'bottom',
+        horizontal: 'right'
+      }
+    });
+  };
+
+  const wsOnOpen = (value) => {
+    console.log('wsOnOpen');
+  };
+  const wsOnClose = (value) => {
+    console.log('wsOnClose');
+  };
+  let refWebSocket = React.useRef();
+  const beforeunload = (event) => {
+    setWebSocketClosed(false);
+  };
+  // 关闭浏览器事件
+  window.removeEventListener('beforeunload', beforeunload);
+  // 刷新浏览器事件
+  window.addEventListener('beforeunload', beforeunload);
   return (
     <RootStyle>
-      {chipLabel === '展 开' ? <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> : ''}
+      {chipLabel ? <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> : ''}
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
 
-      <MainStyle style={{ paddingTop: chipLabel === '展 开' ? APP_BAR_MOBILE + 24 : 0 }}>
+      <MainStyle style={{ paddingTop: chipLabel ? APP_BAR_MOBILE + 24 : 0 }}>
         <Divider>
-          <Chip label={chipLabel} onClick={handleClick} />
+          <Chip label={chipLabel ? '收 起' : '展 开'} onClick={handleClick} />
         </Divider>
         <Outlet />
+        <CustomizedSnackbars snackBarMessage={snackBarMessage} ref={snackRef} />
+        {wbSocketClosed ? (
+          <ReactWebsocket
+            url={wsUrl}
+            onMessage={wsOnMessage} // 接受信息的回调
+            onOpen={wsOnOpen} // websocket打开
+            onClose={wsOnClose} // websocket关闭
+            reconnect
+            debug
+            ref={(Websocket) => {
+              refWebSocket = Websocket;
+            }}
+          />
+        ) : (
+          ''
+        )}
       </MainStyle>
     </RootStyle>
   );
