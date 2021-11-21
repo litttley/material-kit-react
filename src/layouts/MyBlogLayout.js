@@ -69,8 +69,9 @@ function MyBlogLayout(props) {
   const [wsUrl, setWsUrl] = useState('ws://localhost/ws/');
 
   const wsOnMessage = (data) => {
+    console.log('实时提醒消息');
     snackBarToasr(snackRef, {
-      message: 'websock消息提醒',
+      message: data,
       severity: 'success',
       anchorOrigin: {
         // 位置
