@@ -10,7 +10,8 @@
     "test": "node scripts/test.js",
     "lint": "eslint --ext .js,.jsx ./src",
     "lint:fix": "eslint --fix --ext .js,.jsx ./src",
-    "move-static": "copy  ./node_modules/@pdftron/webviewer/public/. ./build/public/webviewer"
+    "move-static": "copy  ./node_modules/@pdftron/webviewer/public/. ./build/public/webviewer",
+    "build:dev": "dotenv -e .env.dev set PORT=9000 && node scripts/start.js"
   },
   "eslintConfig": {
     "extends": "react-app",

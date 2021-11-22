@@ -1,8 +1,8 @@
 import faker from 'faker';
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
-import React, { useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { set, sub, formatDistanceToNow } from 'date-fns';
 import { Icon } from '@iconify/react';
 import bellFill from '@iconify/icons-eva/bell-fill';
@@ -25,12 +25,13 @@ import {
   ListItemAvatar,
   ListItemButton
 } from '@mui/material';
+import axios from 'axios';
 // utils
 import { mockImgAvatar } from '../../utils/mockImages';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
-import { ReactWebsocket } from '../../utils/ReactWebsocket ';
+import CustomizedSnackbars from '../../utils/CustomizedSnackbars';
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
@@ -115,6 +116,12 @@ function renderContent(notification) {
       title
     };
   }
+  if (notification.type === 'stockWatch') {
+    return {
+      avatar: <img alt={notification.title} src="/static/icons/stock_watch.svg" />,
+      title
+    };
+  }
   return {
     avatar: <img alt={notification.title} src={notification.avatar} />,
     title
@@ -166,15 +173,29 @@ function NotificationItem({ notification }) {
   );
 }
 
-export default function NotificationsPopover() {
+export default function NotificationsPopover({ noticeBarRef }) {
+  const navigate = useNavigate();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
 
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-
-  const [wsUrl, setWsUrl] = useState('ws://localhost/ws/');
-
-  const totalUnRead = 4;
+  const [notifications, setNotifications] = useState([]);
+  const [totalUnRead, setTotalUnRead] = useState(0);
+  const [refrush, setRefrush] = useState(false);
+  const [snackBarMessage, setsnackBarMessage] = useState({
+    message: '',
+    severity: 'success', // 可选:error warning info success
+    anchorOrigin: {
+      // 位置
+      vertical: 'top',
+      horizontal: 'center'
+    }
+  });
+  const snackRef = React.useRef();
+  /* function */
+  const snackBarToasr = (ref, message) => {
+    setsnackBarMessage(message);
+    ref.current();
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -185,12 +206,108 @@ export default function NotificationsPopover() {
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false
-      }))
-    );
+    // setNotifications(
+    //   notifications.map((notification) => ({
+    //     ...notification,
+    //     isUnRead: false
+    //   }))
+    // );
+  };
+  noticeBarRef.current = () => {
+    setRefrush(!refrush);
+  };
+  useEffect(() => {
+    getData();
+  }, [refrush]);
+
+  const getData = () => {
+    axios
+      .get('/notice/list')
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          const noticeList = response.data.data;
+          const newArray = noticeList.map((data) => ({
+            id: data.id,
+            title: '你有股票临听消息',
+            type: 'stockWatch',
+            avatar: null,
+            createdAt: new Date(data.createdAt),
+            description: data.messageContent,
+            isUnRead: true
+          }));
+          setNotifications(newArray);
+          setTotalUnRead(newArray.length);
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
+  const onClickView = () => {
+    axios
+      .post('/notice/update', {
+        ids: notifications.map((data) => data.id).join(',')
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          snackBarToasr(snackRef, {
+            message: '更新成功!',
+            severity: 'success',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setRefrush(!refrush);
+        } else {
+          snackBarToasr(snackRef, {
+            message: response.data.msg,
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
   };
 
   return (
@@ -219,7 +336,7 @@ export default function NotificationsPopover() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="subtitle1">通知</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               你有 {totalUnRead} 未读消息
             </Typography>
@@ -236,12 +353,12 @@ export default function NotificationsPopover() {
 
         <Divider />
 
-        <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+        <Scrollbar sx={{ height: { xs: 340 } }}>
           <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                最新
               </ListSubheader>
             }
           >
@@ -254,11 +371,11 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
+                历史信息
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
+            {notifications.slice(2).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
@@ -267,11 +384,12 @@ export default function NotificationsPopover() {
         <Divider />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple component={RouterLink} to="#">
-            View All
+          <Button fullWidth onClick={() => onClickView()}>
+            查看
           </Button>
         </Box>
       </MenuPopover>
+      <CustomizedSnackbars snackBarMessage={snackBarMessage} ref={snackRef} />
     </>
   );
 }

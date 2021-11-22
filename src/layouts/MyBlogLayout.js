@@ -35,13 +35,11 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 function MyBlogLayout(props) {
   console.log('MyBlogLayout');
-
-  const { newState } = props;
   const [open, setOpen] = useState(false);
   const [chipLabel, setChipLabel] = useState(true);
-  const [isDisplayDashboardNavbar, setIsDisplayDashboardNavbar] = useState(false);
+  const [refrush, setRefrush] = useState(0);
   const [wbSocketClosed, setWebSocketClosed] = useState(true);
-  console.log(newState.isDisplay);
+
   const handleClick = () => {
     const value = !chipLabel;
     setChipLabel(value);
@@ -65,10 +63,16 @@ function MyBlogLayout(props) {
   };
 
   // websocket
-
-  const [wsUrl, setWsUrl] = useState('ws://localhost/ws/');
-
+  const noticeBarRef = React.useRef();
+  const [wsUrl, setWsUrl] = useState(process.env.REACT_APP_WS_URL);
   const wsOnMessage = (data) => {
+    noticeBarRef.current();
+    if (chipLabel) {
+      noticeBarRef.current();
+    } else {
+      setChipLabel(true);
+      noticeBarRef.current();
+    }
     console.log('实时提醒消息');
     snackBarToasr(snackRef, {
       message: data,
@@ -97,7 +101,11 @@ function MyBlogLayout(props) {
   window.addEventListener('beforeunload', beforeunload);
   return (
     <RootStyle>
-      {chipLabel ? <DashboardNavbar onOpenSidebar={() => setOpen(true)} /> : ''}
+      {chipLabel ? (
+        <DashboardNavbar onOpenSidebar={() => setOpen(true)} noticeBarRef={noticeBarRef} />
+      ) : (
+        ''
+      )}
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
 
       <MainStyle style={{ paddingTop: chipLabel ? APP_BAR_MOBILE + 24 : 0 }}>
