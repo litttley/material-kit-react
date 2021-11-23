@@ -14,7 +14,7 @@ import { BaseOptionChartStyle } from './components/charts/BaseOptionChart';
 // axios.defaults.baseURL = 'http://42.194.189.204:80';
 // axios.defaults.baseURL = 'http://localhost:80';
 
-axios.defaults.baseURL = process.env.BASE_URL;
+axios.defaults.baseURL = 'http://localhost:80';
 /* 允许跨域携带cookie */
 axios.defaults.withCredentials = true;
 
