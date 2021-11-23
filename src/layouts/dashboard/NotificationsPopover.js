@@ -87,7 +87,7 @@ function renderContent(notification) {
     <Typography variant="subtitle2">
       {notification.title}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
+        {notification.description}
       </Typography>
     </Typography>
   );
@@ -229,7 +229,7 @@ export default function NotificationsPopover({ noticeBarRef }) {
           const noticeList = response.data.data;
           const newArray = noticeList.map((data) => ({
             id: data.id,
-            title: '你有股票临听消息',
+            title: '',
             type: 'stockWatch',
             avatar: null,
             createdAt: new Date(data.createdAt),
