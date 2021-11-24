@@ -102,21 +102,21 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
           <Box sx={{ textAlign: 'center' }}>
             <Typography gutterBottom variant="h6">
-              Get more?
+              公告
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              From only $69
+              量化交易@小Y
             </Typography>
           </Box>
 
-          <Button
+          {/* <Button
             fullWidth
             href="https://material-ui.com/store/items/minimal-dashboard/"
             target="_blank"
             variant="contained"
           >
             更新到最新
-          </Button>
+          </Button> */}
         </Stack>
       </Box>
     </Scrollbar>

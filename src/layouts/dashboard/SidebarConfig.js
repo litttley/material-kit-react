@@ -34,11 +34,11 @@ const sidebarConfig = [
       }
     ]
   },
-  {
-    title: '读书',
-    path: '/index/reader',
-    icon: getIcon(fileTextFill)
-  },
+  // {
+  //   title: '读书',
+  //   path: '/index/reader',
+  //   icon: getIcon(fileTextFill)
+  // },
 
   {
     title: '股票',
@@ -50,43 +50,43 @@ const sidebarConfig = [
     title: '股票监听',
     path: '/index/stockWatch',
     icon: getIcon(MonitorOutlined)
-  },
-  {
-    title: 'dashboard',
-    path: '/dashboard/app',
-    icon: getIcon(pieChart2Fill)
-  },
-  {
-    title: 'user',
-    path: '/dashboard/user',
-    icon: getIcon(peopleFill)
-  },
-  {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: getIcon(shoppingBagFill)
-  },
-  {
-    title: 'blog1',
-    path: '/dashboard/blog',
-    icon: getIcon(fileTextFill)
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: getIcon(lockFill)
-  },
-  {
-    title: 'register',
-    path: '/register',
-    icon: getIcon(personAddFill)
-  },
-
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: getIcon(alertTriangleFill)
   }
+  // {
+  //   title: 'dashboard',
+  //   path: '/dashboard/app',
+  //   icon: getIcon(pieChart2Fill)
+  // },
+  // {
+  //   title: 'user',
+  //   path: '/dashboard/user',
+  //   icon: getIcon(peopleFill)
+  // },
+  // {
+  //   title: 'product',
+  //   path: '/dashboard/products',
+  //   icon: getIcon(shoppingBagFill)
+  // },
+  // {
+  //   title: 'blog1',
+  //   path: '/dashboard/blog',
+  //   icon: getIcon(fileTextFill)
+  // },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: getIcon(lockFill)
+  // },
+  // {
+  //   title: 'register',
+  //   path: '/register',
+  //   icon: getIcon(personAddFill)
+  // },
+
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: getIcon(alertTriangleFill)
+  // }
 ];
 
 export default sidebarConfig;

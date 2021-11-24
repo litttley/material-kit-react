@@ -28,22 +28,22 @@ import IconButton from './theme/overrides/IconButton';
 
 export default function Router() {
   return useRoutes([
-    {
-      path: '/dashboard',
-      element: <DashboardLayout />,
-      children: [
-        // { path: '/s', element: <Navigate to="/dashboard/app" replace /> },
+    // {
+    //   path: '/dashboard',
+    //   element: <DashboardLayout />,
+    //   children: [
+    //     // { path: '/s', element: <Navigate to="/dashboard/app" replace /> },
 
-        { element: <Navigate to="/dashboard/app" replace /> },
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> },
-        { path: 'myblog', element: <MyBlog /> }
-      ]
-    },
+    //     { element: <Navigate to="/dashboard/app" replace /> },
+    //     { path: 'app', element: <DashboardApp /> },
+    //     { path: 'user', element: <User /> },
+    //     { path: 'products', element: <Products /> },
+    //     { path: 'blog', element: <Blog /> },
+    //     { path: 'myblog', element: <MyBlog /> }
+    //   ]
+    // },
     {
-      path: '/login',
+      path: 'login',
       element: <LogoOnlyLayout />,
       children: [
         {
@@ -58,7 +58,7 @@ export default function Router() {
     },
 
     {
-      path: '/index',
+      path: 'index',
       element: <MyBlogLayout />,
       children: [
         { path: 'blog/list', element: <User /> },
@@ -66,17 +66,17 @@ export default function Router() {
         { path: 'blog/edit', element: <BlogEdit /> },
         { path: 'blog/view', element: <BlogView /> },
         //  { path: '/tools/translation', element: <Translation /> },
-        { path: 'reader', element: <PdfReader /> },
+        // { path: 'reader', element: <PdfReader /> },
         { path: 'stock', element: <Stock /> },
         { path: 'stockWatch', element: <StockWatch /> }
       ]
     },
 
-    {
-      path: '/',
-      element: <Navigate to="/index" />
-    },
+    // {
+    //   path: '/',
+    //   element: <Navigate to="/index" />
+    // },
 
-    { path: '*', element: <Navigate to="/404" replace /> }
+    { path: '*', element: <Navigate to="/index" replace /> }
   ]);
 }

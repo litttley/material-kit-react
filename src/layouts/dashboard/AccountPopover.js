@@ -1,32 +1,33 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import { useRef, useState } from 'react';
 import homeFill from '@iconify/icons-eva/home-fill';
 import personFill from '@iconify/icons-eva/person-fill';
 import settings2Fill from '@iconify/icons-eva/settings-2-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '@mui/material';
+import axios from 'axios';
 // components
 import MenuPopover from '../../components/MenuPopover';
 //
 import account from '../../_mocks_/account';
-
+import CustomizedSnackbars from '../../utils/CustomizedSnackbars';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
+    label: '首页',
     icon: homeFill,
     linkTo: '/'
   },
   {
-    label: 'Profile',
+    label: '账户',
     icon: personFill,
     linkTo: '#'
   },
   {
-    label: 'Settings',
+    label: '设置',
     icon: settings2Fill,
     linkTo: '#'
   }
@@ -36,7 +37,25 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const anchorRef = useRef(null);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [refrush, setRefrush] = useState(false);
+  const [userInfo, setUserInfo] = useState();
+  const [snackBarMessage, setsnackBarMessage] = useState({
+    message: '',
+    severity: 'success', // 可选:error warning info success
+    anchorOrigin: {
+      // 位置
+      vertical: 'top',
+      horizontal: 'center'
+    }
+  });
+  const snackRef = React.useRef();
+  /* function */
+  const snackBarToasr = (ref, message) => {
+    setsnackBarMessage(message);
+    ref.current();
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -44,6 +63,40 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const getData = () => {
+    axios
+      .get('/userInfo')
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          const userInfo = response.data.data;
+          setUserInfo(userInfo);
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, [refrush]);
 
   return (
     <>
@@ -78,10 +131,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {userInfo.userName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {userInfo.email}
           </Typography>
         </Box>
 
@@ -115,6 +168,7 @@ export default function AccountPopover() {
           </Button>
         </Box>
       </MenuPopover>
+      <CustomizedSnackbars snackBarMessage={snackBarMessage} ref={snackRef} />
     </>
   );
 }
