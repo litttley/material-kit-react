@@ -40,7 +40,7 @@ export default function AccountPopover() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [refrush, setRefrush] = useState(false);
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState({ userName: '', email: '' });
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
     severity: 'success', // 可选:error warning info success
@@ -97,7 +97,44 @@ export default function AccountPopover() {
   useEffect(() => {
     getData();
   }, [refrush]);
+  const onClickLogOut = () => {
+    axios
+      .get('/userInfo')
+      .then((response) => {
+        if (response.data.code === 200) {
+          const { msg } = response.data.msg;
 
+          snackBarToasr(snackRef, {
+            message: '已退出',
+            severity: 'success',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/', { replace: true }), 1000);
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
   return (
     <>
       <IconButton
@@ -163,7 +200,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button fullWidth color="inherit" variant="outlined" onClick={onClickLogOut}>
             退出
           </Button>
         </Box>
