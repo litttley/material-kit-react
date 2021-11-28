@@ -6,6 +6,7 @@ import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import toolFill from '@iconify/icons-ant-design/tool-fill';
 import stockOutLine from '@iconify/icons-ant-design/stock-outline';
 import MonitorOutlined from '@iconify/icons-ant-design/monitor-outlined';
+import TransactionOutlined from '@iconify/icons-ant-design/transaction-outlined';
 
 import transaction from '@iconify/icons-ant-design/transaction';
 import lockFill from '@iconify/icons-eva/lock-fill';
@@ -50,6 +51,12 @@ const sidebarConfig = [
     title: '股票监听',
     path: '/index/stockWatch',
     icon: getIcon(MonitorOutlined)
+  },
+
+  {
+    title: '股票交易',
+    path: '/index/stockTrade',
+    icon: getIcon(TransactionOutlined)
   }
   // {
   //   title: 'dashboard',

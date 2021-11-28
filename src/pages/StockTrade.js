@@ -19,7 +19,6 @@ import {
   TablePagination,
   Paper
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import Page from '../components/Page';
 import PageUtils from './tools/PageUtils';
@@ -27,70 +26,21 @@ import CustomizedSnackbars from '../utils/CustomizedSnackbars';
 import { UserListToolbar } from '../components/_dashboard/user';
 import Scrollbar from '../components/Scrollbar';
 import UserListHead from './tools/PageTableHead';
-import StockWatchDialog from './tools/StockWatchDialog';
+import StockTradeDialog from './tools/StockTradeDialog';
 
 import SearchNotFound from '../components/SearchNotFound';
 import ViewEditToolBar from '../components/ViewEditToolBar';
 
-const IOSSwitch = styled((props) => (
-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
-  width: 42,
-  height: 26,
-  padding: 0,
-  '& .MuiSwitch-switchBase': {
-    padding: 0,
-    margin: 2,
-    transitionDuration: '300ms',
-    '&.Mui-checked': {
-      transform: 'translateX(16px)',
-      color: '#fff',
-      '& + .MuiSwitch-track': {
-        backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
-        opacity: 1,
-        border: 0
-      },
-      '&.Mui-disabled + .MuiSwitch-track': {
-        opacity: 0.5
-      }
-    },
-    '&.Mui-focusVisible .MuiSwitch-thumb': {
-      color: '#33cf4d',
-      border: '6px solid #fff'
-    },
-    '&.Mui-disabled .MuiSwitch-thumb': {
-      color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600]
-    },
-    '&.Mui-disabled + .MuiSwitch-track': {
-      opacity: theme.palette.mode === 'light' ? 0.7 : 0.3
-    }
-  },
-  '& .MuiSwitch-thumb': {
-    boxSizing: 'border-box',
-    width: 22,
-    height: 22
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: 26 / 2,
-    backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-    opacity: 1,
-    transition: theme.transitions.create(['background-color'], {
-      duration: 500
-    })
-  }
-}));
-function StockWatch(props) {
+function StockTrade(props) {
   const navigate = useNavigate();
   const tableHead = [
     { id: 'codeName', label: '股票名称', alignRight: false },
     { id: 'code', label: '股票编码', alignRight: false },
-    { id: 'refClose', label: '参考价', alignRight: false },
     { id: 'updateAt', label: '更新日期', alignRight: false },
-    { id: 'upPrice', label: '涨幅价格', alignRight: false },
-    { id: 'upWatch', label: '涨幅监听', alignRight: false },
-    { id: 'lowPrice', label: '跌幅价格', alignRight: false },
-    { id: 'lowWatch', label: '跌幅监听', alignRight: false },
-    { id: 'addTrade', label: '是否交易', alignRight: false }
+    { id: 'sellPrice', label: '卖出价格', alignRight: false },
+    { id: 'sellTrade', label: '卖出交易', alignRight: false },
+    { id: 'buyPrice', label: '买入价格', alignRight: false },
+    { id: 'buyTrade', label: '买入交易', alignRight: false }
   ];
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -103,7 +53,7 @@ function StockWatch(props) {
   const [refrush, setRefrush] = useState(false);
   const [refrush2, setRefrush2] = useState(0);
   const [count, setCount] = useState(0);
-  const [stockWatchLabel, setStockWatchLabel] = useState('否');
+  const [stockTradeLabel, setStockTradeLabel] = useState('否');
   // const dialogRef = React.useRef();
   const dialogRef = () => {
     let value = refrush2;
@@ -137,7 +87,7 @@ function StockWatch(props) {
   }, [refrush, refrush2]);
   const getData = () => {
     axios
-      .post('/stockWatch/list', {
+      .post('/stockTrade/list', {
         page, // 第几页
         rowsPerPage,
         searchValue: filterName
@@ -145,73 +95,20 @@ function StockWatch(props) {
       .then((response) => {
         console.log(response);
         if (response.data.code === 200) {
-          const dataArray = response.data.data.stock_watch_list;
-          const { count } = response.data;
+          const dataArray = response.data.data.stock_trade_list;
+          const { count } = response.data.data;
           const newArray = dataArray.map((data) => ({
             id: data.id,
             updatedAt: data.updatedAt,
             code: data.code,
             codeName: data.codeName,
-            upPirce: data.upPirce,
-            lowPirce: data.lowPirce,
-            upClosed: data.upClosed,
-            lowClosed: data.lowClosed,
-            refPrice: data.refPrice,
-            stockTradeFlag: data.tradeClosed
+            buyPirce: data.buyPirce,
+            sellPirce: data.sellPirce,
+            buyClosed: data.buyClosed,
+            sellClosed: data.sellClosed
           }));
           setDataList(newArray);
           setCount(count);
-        }
-      })
-      .catch((error) => {
-        if (
-          error.response !== null &&
-          error.response !== undefined &&
-          error.response.status === 401
-        ) {
-          snackBarToasr(snackRef, {
-            message: '密码过期请重新登录!',
-            severity: 'error',
-            anchorOrigin: {
-              // 位置
-              vertical: 'top',
-              horizontal: 'center'
-            }
-          });
-          setTimeout(() => navigate('/login', { replace: true }), 1000);
-        }
-      });
-  };
-
-  const changeStockTradeFlag = (flag, refStcokWatchId) => {
-    axios
-      .post('/stockTrade/save', {
-        flag, // 第几页
-        refStockWatchCodeId: refStcokWatchId
-      })
-      .then((response) => {
-        console.log(response);
-        if (response.data.code === 200 && response.data.msg === 'ok') {
-          getData();
-          snackBarToasr(snackRef, {
-            message: '操作成功',
-            severity: 'success',
-            anchorOrigin: {
-              // 位置
-              vertical: 'top',
-              horizontal: 'center'
-            }
-          });
-        } else {
-          snackBarToasr(snackRef, {
-            message: '操作失败',
-            severity: 'error',
-            anchorOrigin: {
-              // 位置
-              vertical: 'top',
-              horizontal: 'center'
-            }
-          });
         }
       })
       .catch((error) => {
@@ -291,20 +188,14 @@ function StockWatch(props) {
     setPage(0); // 页数
     setDataList([]);
   };
-
-  const stockTradeChange = (flag, stockWatchId) => {
-    // event.currentTarget.labels[0].innerText = checked ? '是' : '否';
-    console.log(stockWatchId);
-    changeStockTradeFlag(flag, stockWatchId);
-  };
   const isUserNotFound = dataList.length === 0;
   return (
     <>
-      <Page title="股票监听">
+      <Page title="股票交易">
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
-              股票监听列表
+              股票交易设置列表
             </Typography>
           </Stack>
 
@@ -333,12 +224,11 @@ function StockWatch(props) {
                         updatedAt,
                         codeName,
                         code,
-                        upPirce,
-                        lowPirce,
-                        upClosed,
-                        lowClosed,
-                        refPrice,
-                        stockTradeFlag
+                        buyPirce,
+                        sellPirce,
+                        buyClosed,
+                        sellClosed,
+                        refPrice
                       } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
 
@@ -359,53 +249,40 @@ function StockWatch(props) {
                           </TableCell>
                           <TableCell align="left">{codeName}</TableCell>
                           <TableCell align="left">{code}</TableCell>
-                          <TableCell align="left">{refPrice}</TableCell>
                           <TableCell align="left">{updatedAt}</TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: upClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: buyClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {upPirce}
+                            {buyPirce}
                           </TableCell>
 
                           <TableCell align="left">
-                            <StockWatchDialog
+                            <StockTradeDialog
                               id={id}
                               refPrice={refPrice}
-                              title="涨幅监听设置"
+                              title="股票卖出设置"
                               type={1}
-                              closed={upClosed}
-                              prevPrice={upPirce}
+                              closed={buyClosed}
+                              prevPrice={buyPirce}
                               dialogRef={dialogRef}
                             />
                           </TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: lowClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: sellClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {lowPirce}
+                            {sellPirce}
                           </TableCell>
                           <TableCell align="left">
-                            <StockWatchDialog
+                            <StockTradeDialog
                               id={id}
                               refPrice={refPrice}
-                              title="跌幅监听设置"
+                              title="股票买入设置"
                               type={0}
-                              closed={lowClosed}
-                              prevPrice={lowPirce}
+                              closed={sellClosed}
+                              prevPrice={sellPirce}
                               dialogRef={dialogRef}
-                            />
-                          </TableCell>
-                          <TableCell align="left">
-                            <FormControlLabel
-                              onChange={(event, checked) => {
-                                stockTradeChange(checked ? '1' : '0', id);
-                              }}
-                              control={
-                                <IOSSwitch sx={{ m: 1 }} defaultChecked={stockTradeFlag === '1'} />
-                              }
-                              // checked={stockWatchFlag === '1'}
-                              label={stockTradeFlag === '0' ? '否' : '是'}
                             />
                           </TableCell>
                           <TableCell align="right">
@@ -448,4 +325,4 @@ function StockWatch(props) {
   );
 }
 
-export default StockWatch;
+export default StockTrade;

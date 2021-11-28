@@ -21,7 +21,7 @@ import Translation from './pages/tools/Translation';
 import PdfReader from './pages/tools/PdfReader';
 import Stock from './pages/Stock';
 import StockWatch from './pages/StockWatch';
-
+import StockTrade from './pages/StockTrade';
 import IconButton from './theme/overrides/IconButton';
 
 // ----------------------------------------------------------------------
@@ -68,7 +68,8 @@ export default function Router() {
         //  { path: '/tools/translation', element: <Translation /> },
         // { path: 'reader', element: <PdfReader /> },
         { path: 'stock', element: <Stock /> },
-        { path: 'stockWatch', element: <StockWatch /> }
+        { path: 'stockWatch', element: <StockWatch /> },
+        { path: 'stockTrade', element: <StockTrade /> }
       ]
     },
 
