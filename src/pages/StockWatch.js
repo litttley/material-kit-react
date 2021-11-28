@@ -38,10 +38,10 @@ function StockWatch(props) {
     { id: 'code', label: '股票编码', alignRight: false },
     { id: 'refClose', label: '参考价', alignRight: false },
     { id: 'updateAt', label: '更新日期', alignRight: false },
-    { id: 'buyPrice', label: '涨幅价格', alignRight: false },
-    { id: 'buyWatch', label: '涨幅监听', alignRight: false },
-    { id: 'sellPrice', label: '跌幅价格', alignRight: false },
-    { id: 'sellWatch', label: '跌幅监听', alignRight: false }
+    { id: 'upPrice', label: '涨幅价格', alignRight: false },
+    { id: 'upWatch', label: '涨幅监听', alignRight: false },
+    { id: 'lowPrice', label: '跌幅价格', alignRight: false },
+    { id: 'lowWatch', label: '跌幅监听', alignRight: false }
   ];
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -103,10 +103,10 @@ function StockWatch(props) {
             updatedAt: data.updatedAt,
             code: data.code,
             codeName: data.codeName,
-            buyPirce: data.buyPirce,
-            sellPirce: data.sellPirce,
-            buyClosed: data.buyClosed,
-            sellClosed: data.sellClosed,
+            upPirce: data.upPirce,
+            lowPirce: data.lowPirce,
+            upClosed: data.upClosed,
+            lowClosed: data.lowClosed,
             refPrice: data.refPrice
           }));
           setDataList(newArray);
@@ -226,10 +226,10 @@ function StockWatch(props) {
                         updatedAt,
                         codeName,
                         code,
-                        buyPirce,
-                        sellPirce,
-                        buyClosed,
-                        sellClosed,
+                        upPirce,
+                        lowPirce,
+                        upClosed,
+                        lowClosed,
                         refPrice
                       } = row;
                       const isItemSelected = selected.indexOf(id) !== -1;
@@ -255,9 +255,9 @@ function StockWatch(props) {
                           <TableCell align="left">{updatedAt}</TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: buyClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: upClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {buyPirce}
+                            {upPirce}
                           </TableCell>
 
                           <TableCell align="left">
@@ -266,16 +266,16 @@ function StockWatch(props) {
                               refPrice={refPrice}
                               title="涨幅监听设置"
                               type={1}
-                              closed={buyClosed}
-                              prevPrice={buyPirce}
+                              closed={upClosed}
+                              prevPrice={upPirce}
                               dialogRef={dialogRef}
                             />
                           </TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: sellClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: lowClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {sellPirce}
+                            {lowPirce}
                           </TableCell>
                           <TableCell align="left">
                             <StockWatchDialog
@@ -283,8 +283,8 @@ function StockWatch(props) {
                               refPrice={refPrice}
                               title="跌幅监听设置"
                               type={0}
-                              closed={sellClosed}
-                              prevPrice={sellPirce}
+                              closed={lowClosed}
+                              prevPrice={lowPirce}
                               dialogRef={dialogRef}
                             />
                           </TableCell>
