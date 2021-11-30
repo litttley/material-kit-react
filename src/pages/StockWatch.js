@@ -128,7 +128,6 @@ function StockWatch(props) {
   };
 
   useEffect(() => {
-    console.log('useEffect');
     getData();
   }, [page, rowsPerPage, filterName]);
 
@@ -159,6 +158,7 @@ function StockWatch(props) {
             refPrice: data.refPrice,
             stockTradeFlag: data.tradeClosed
           }));
+          setDataList([]);
           setDataList(newArray);
           setCount(count);
         }
@@ -192,7 +192,7 @@ function StockWatch(props) {
       .then((response) => {
         console.log(response);
         if (response.data.code === 200 && response.data.msg === 'ok') {
-          getData();
+          setRefrush(!refrush);
           snackBarToasr(snackRef, {
             message: '操作成功',
             severity: 'success',
@@ -203,8 +203,9 @@ function StockWatch(props) {
             }
           });
         } else {
+          setRefrush(!refrush);
           snackBarToasr(snackRef, {
-            message: '操作失败',
+            message: response.data.msg,
             severity: 'error',
             anchorOrigin: {
               // 位置

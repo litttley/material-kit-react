@@ -252,9 +252,9 @@ function StockTrade(props) {
                           <TableCell align="left">{updatedAt}</TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: buyClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: sellClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {buyPirce}
+                            {sellPirce}
                           </TableCell>
 
                           <TableCell align="left">
@@ -263,16 +263,16 @@ function StockTrade(props) {
                               refPrice={refPrice}
                               title="股票卖出设置"
                               type={1}
-                              closed={buyClosed}
-                              prevPrice={buyPirce}
+                              closed={sellClosed}
+                              prevPrice={sellPirce}
                               dialogRef={dialogRef}
                             />
                           </TableCell>
                           <TableCell
                             align="left"
-                            style={{ color: sellClosed === 'O' ? '#fb7600' : '#212B36' }}
+                            style={{ color: buyClosed === 'O' ? '#fb7600' : '#212B36' }}
                           >
-                            {sellPirce}
+                            {buyPirce}
                           </TableCell>
                           <TableCell align="left">
                             <StockTradeDialog
@@ -280,8 +280,8 @@ function StockTrade(props) {
                               refPrice={refPrice}
                               title="股票买入设置"
                               type={0}
-                              closed={sellClosed}
-                              prevPrice={sellPirce}
+                              closed={buyClosed}
+                              prevPrice={buyPirce}
                               dialogRef={dialogRef}
                             />
                           </TableCell>

@@ -198,6 +198,7 @@ function PageUtils(props) {
             high: data.high,
             stockWatchFlag: data.stockWatchFlag
           }));
+          setDataList([]);
           setDataList(newArray);
           setCount(count);
         }
@@ -231,7 +232,6 @@ function PageUtils(props) {
       .then((response) => {
         console.log(response);
         if (response.data.code === 200 && response.data.msg === 'ok') {
-          getData();
           snackBarToasr(snackRef, {
             message: '操作成功',
             severity: 'success',
@@ -241,9 +241,10 @@ function PageUtils(props) {
               horizontal: 'center'
             }
           });
+          setRefrush(!refrush);
         } else {
           snackBarToasr(snackRef, {
-            message: '操作失败',
+            message: response.data.msg,
             severity: 'error',
             anchorOrigin: {
               // 位置
@@ -251,6 +252,7 @@ function PageUtils(props) {
               horizontal: 'center'
             }
           });
+          setRefrush(!refrush);
         }
       })
       .catch((error) => {
