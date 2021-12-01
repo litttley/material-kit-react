@@ -99,7 +99,7 @@ export default function AccountPopover() {
   }, [refrush]);
   const onClickLogOut = () => {
     axios
-      .get('/userInfo')
+      .get('/logout')
       .then((response) => {
         if (response.data.code === 200) {
           const { msg } = response.data.msg;

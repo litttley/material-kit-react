@@ -56,9 +56,7 @@ function StockTrade(props) {
   const [stockTradeLabel, setStockTradeLabel] = useState('否');
   // const dialogRef = React.useRef();
   const dialogRef = () => {
-    let value = refrush2;
-
-    setRefrush2(Object.assign((value += 1)));
+    setRefrush(!refrush);
   };
 
   const [snackBarMessage, setsnackBarMessage] = useState({
@@ -93,10 +91,9 @@ function StockTrade(props) {
         searchValue: filterName
       })
       .then((response) => {
-        console.log(response);
         if (response.data.code === 200) {
           const dataArray = response.data.data.stock_trade_list;
-          const { count } = response.data.data;
+          const { count, _ } = response.data.data;
           const newArray = dataArray.map((data) => ({
             id: data.id,
             updatedAt: data.updatedAt,
@@ -107,7 +104,8 @@ function StockTrade(props) {
             buyClosed: data.buyClosed,
             sellClosed: data.sellClosed
           }));
-          setDataList(newArray);
+
+          setDataList(Object.assign(newArray));
           setCount(count);
         }
       })

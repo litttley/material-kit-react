@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
@@ -53,17 +53,36 @@ export default function LoginForm() {
     formik.setSubmitting(isSubmiting);
   };
 
-  const formik = useFormik({
-    initialValues: {
-      password: '',
-      username: '',
-      remember: true
-    },
-    validationSchema: LoginSchema,
-    onSubmit: () => {
+  const [wasm, setWasm] = useState();
+  const loadWasm = async () => {
+    try {
+      // eslint-disable-next-line import/no-unresolved
+      const wasms1 = await import('ly-blog-wasm');
+      return wasms1;
+    } catch (err) {
+      console.error(`Unexpected error in loadWasm. [Message: ${err.message}]`);
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const future = loadWasm();
+    future.then((resp) => {
+      if (resp !== null) {
+        setWasm(resp);
+      }
+    });
+
+    console.log('111');
+  }, []);
+
+  const onEnctypt = (formik) => {
+    wasm.encrypt(formik.values.password).then((val) => {
       axios
         .post('/signin', {
-          ...formik.values
+          password: val,
+          username: formik.values.username,
+          remember: formik.values.remember
         })
         .then((response) => {
           console.log(response);
@@ -103,6 +122,19 @@ export default function LoginForm() {
           });
         });
       updateSubmiting(false);
+    });
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      password: '',
+      username: '',
+      remember: true
+    },
+    validationSchema: LoginSchema,
+
+    onSubmit: () => {
+      onEnctypt(formik);
     }
   });
 

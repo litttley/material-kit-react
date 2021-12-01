@@ -106,9 +106,7 @@ function StockWatch(props) {
   const [stockWatchLabel, setStockWatchLabel] = useState('否');
   // const dialogRef = React.useRef();
   const dialogRef = () => {
-    let value = refrush2;
-
-    setRefrush2(Object.assign((value += 1)));
+    setRefrush(!refrush);
   };
 
   const [snackBarMessage, setsnackBarMessage] = useState({
@@ -142,10 +140,9 @@ function StockWatch(props) {
         searchValue: filterName
       })
       .then((response) => {
-        console.log(response);
         if (response.data.code === 200) {
           const dataArray = response.data.data.stock_watch_list;
-          const { count } = response.data;
+          const { count, _ } = response.data.data;
           const newArray = dataArray.map((data) => ({
             id: data.id,
             updatedAt: data.updatedAt,
@@ -158,7 +155,7 @@ function StockWatch(props) {
             refPrice: data.refPrice,
             stockTradeFlag: data.tradeClosed
           }));
-          setDataList([]);
+
           setDataList(newArray);
           setCount(count);
         }

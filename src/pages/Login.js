@@ -72,9 +72,9 @@ export default function Login() {
 
           <MHidden width="smUp">
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-              Don’t have an account?&nbsp;
+              还没账号?&nbsp;
               <Link variant="subtitle2" component={RouterLink} to="register">
-                Get started
+                注册账号
               </Link>
             </Typography>
           </MHidden>
