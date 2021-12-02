@@ -313,7 +313,7 @@ function StockWatch(props) {
               onFilterName={handleFilterByName}
             />
             <Scrollbar>
-              <TableContainer sx={{ minWidth: 800 }}>
+              <TableContainer sx={{ minWidth: 960 }}>
                 <Table>
                   <UserListHead
                     order={order}
