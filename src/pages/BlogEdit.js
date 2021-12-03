@@ -75,52 +75,8 @@ export default function BlogEdit() {
   const inputRef = React.useRef();
   const radioRef = React.useRef();
   const markdownContentRef = React.useRef();
+  const [myBaseUrl, setMyBaseUrl] = useState(process.env.REACT_APP_MY_BASE_URL);
 
-  // 上传成功响应
-  const uploadComplete = (evt) => {
-    // 服务断接收完文件返回的结果
-
-    const data = JSON.parse(evt.target.responseText);
-    if (data.success === 1) {
-      const imgUrl = `\n![image](${data.url})\r\n`;
-      setContent(content + imgUrl);
-
-      //   CodeMirror.Doc.replaceSelection(' ![image](" + data.url + ")\\r\\n ');
-
-      snackBarToasr(snackRef, {
-        message: '图片上传成功!',
-        severity: 'success',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    } else {
-      snackBarToasr(snackRef, {
-        message: '图片上传失败!',
-        severity: 'error',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    }
-  };
-
-  // 上传失败
-  const uploadFailed = () => {
-    snackBarToasr(snackRef, {
-      message: '图片上传失败!',
-      severity: 'error',
-      anchorOrigin: {
-        // 位置
-        vertical: 'top',
-        horizontal: 'center'
-      }
-    });
-  };
   const imagePast = (evt) => {
     console.log('patsteevent');
     const { clipboardData } = evt.nativeEvent;
@@ -133,23 +89,42 @@ export default function BlogEdit() {
       const item = clipboardData.items[i];
       if (item.kind === 'file' && isImage.test(item.type)) {
         const img = item.getAsFile();
-        // 服务器地址
-        // var url='http://localhost/uploadimg?guid=1564673641404';
-        const { baseURL } = axios.defaults;
-        const url = `${baseURL}/uploadimg?guid=1564673641404`;
         const formData = new FormData();
         // 将得到的图片文件添加到FormData
         formData.append('file', img);
+        const config = {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        };
+        axios
+          .post('/uploadimg', formData, config)
+          .then((response) => {
+            if (response.data.success === 1) {
+              const { url } = response.data;
+              const imgUrl = `\n![image](${myBaseUrl}\\${url})\r\n`;
 
-        // 上传图片
-        const xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
-        // 上传结束
-        xhr.open('POST', url, true);
-
-        xhr.onload = uploadComplete; // 请求完成
-        xhr.onerror = uploadFailed; // 请求失败
-        xhr.send(formData);
+              setContent(content + imgUrl);
+              snackBarToasr(snackRef, {
+                message: '图片上传成功!',
+                severity: 'success',
+                anchorOrigin: {
+                  // 位置
+                  vertical: 'top',
+                  horizontal: 'center'
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            snackBarToasr(snackRef, {
+              message: '图片上传失败!',
+              severity: 'error',
+              anchorOrigin: {
+                // 位置
+                vertical: 'top',
+                horizontal: 'center'
+              }
+            });
+          });
         // 当剪贴板里是图片时，禁止默认的粘贴
         return false;
       }
@@ -250,7 +225,10 @@ export default function BlogEdit() {
   };
   return (
     <>
-      <Page title="编辑笔记" className={classes.root}>
+      <Page title="编辑笔记">
+        <Typography variant="h4" gutterBottom>
+          编辑笔记
+        </Typography>
         <Grid container spacing={3}>
           <Grid item xs={9} sm={9} md={9}>
             <TextField

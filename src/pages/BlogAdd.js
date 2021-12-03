@@ -55,6 +55,7 @@ export default function BlogAdd() {
   /* state */
   const [moudle, setMoudle] = useState('');
   const [content, setContent] = useState('');
+  const [myBaseUrl, setMyBaseUrl] = useState(process.env.REACT_APP_MY_BASE_URL);
   const [snackBarMessage, setsnackBarMessage] = useState({
     message: '',
     severity: 'success', // 可选:error warning info success
@@ -139,53 +140,6 @@ export default function BlogAdd() {
     setContent(value);
   };
 
-  /* 图片上传 */
-  // 上传成功响应
-  const uploadComplete = (evt) => {
-    // 服务断接收完文件返回的结果
-
-    const data = JSON.parse(evt.target.responseText);
-    if (data.success === 1) {
-      const imgUrl = `\n![image](${data.url})\r\n`;
-
-      setContent(content + imgUrl);
-
-      //   CodeMirror.Doc.replaceSelection(' ![image](" + data.url + ")\\r\\n ');
-
-      snackBarToasr(snackRef, {
-        message: '图片上传成功!',
-        severity: 'success',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    } else {
-      snackBarToasr(snackRef, {
-        message: '图片上传失败!',
-        severity: 'error',
-        anchorOrigin: {
-          // 位置
-          vertical: 'top',
-          horizontal: 'center'
-        }
-      });
-    }
-  };
-
-  // 上传失败
-  const uploadFailed = () => {
-    snackBarToasr(snackRef, {
-      message: '图片上传失败!',
-      severity: 'error',
-      anchorOrigin: {
-        // 位置
-        vertical: 'top',
-        horizontal: 'center'
-      }
-    });
-  };
   const imagePast = (evt) => {
     console.log('patsteevent');
     const { clipboardData } = evt.nativeEvent;
@@ -198,28 +152,54 @@ export default function BlogAdd() {
       const item = clipboardData.items[i];
       if (item.kind === 'file' && isImage.test(item.type)) {
         const img = item.getAsFile();
-        // 服务器地址
-        // var url='http://localhost/uploadimg?guid=1564673641404';
-        const url = `/uploadimg?guid=1564673641404`;
         const formData = new FormData();
         // 将得到的图片文件添加到FormData
         formData.append('file', img);
+        const config = {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        };
+        axios
+          .post('/uploadimg', formData, config)
+          .then((response) => {
+            if (response.data.success === 1) {
+              const { url } = response.data;
+              const imgUrl = `\n![image](${myBaseUrl}\\${url})\r\n`;
 
-        // 上传图片
-        const xhr = new XMLHttpRequest();
-        // 上传结束
-        xhr.open('POST', url, true);
-        xhr.onload = uploadComplete; // 请求完成
-        xhr.onerror = uploadFailed; // 请求失败
-        xhr.send(formData);
-        // 当剪贴板里是图片时，禁止默认的粘贴
+              setContent(content + imgUrl);
+              snackBarToasr(snackRef, {
+                message: '图片上传成功!',
+                severity: 'success',
+                anchorOrigin: {
+                  // 位置
+                  vertical: 'top',
+                  horizontal: 'center'
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            snackBarToasr(snackRef, {
+              message: '图片上传失败!',
+              severity: 'error',
+              anchorOrigin: {
+                // 位置
+                vertical: 'top',
+                horizontal: 'center'
+              }
+            });
+          });
+
         return false;
       }
     }
   };
   return (
     <>
-      <Page title="添加笔记" className={classes.root}>
+      <Page title="添加笔记">
+        <Typography variant="h4" gutterBottom>
+          添加笔记
+        </Typography>
+
         <Grid container spacing={3}>
           <Grid item xs={10} sm={10} md={10}>
             <TextField

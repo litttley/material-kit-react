@@ -72,7 +72,10 @@ export default function BlogView() {
 
   return (
     <>
-      <Page title="查看笔记" className={classes.root}>
+      <Page title="查看笔记">
+        <Typography variant="h4" gutterBottom>
+          查看笔记
+        </Typography>
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12}>
             <Typography variant="h4" align="center">
