@@ -4,6 +4,7 @@ import { noCase } from 'change-case';
 import React, { useRef, useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { set, sub, formatDistanceToNow } from 'date-fns';
+import { es, ru, zhCN } from 'date-fns/locale';
 import { Icon } from '@iconify/react';
 import bellFill from '@iconify/icons-eva/bell-fill';
 import clockFill from '@iconify/icons-eva/clock-fill';
@@ -165,7 +166,9 @@ function NotificationItem({ notification }) {
             }}
           >
             <Box component={Icon} icon={clockFill} sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {formatDistanceToNow(new Date(notification.createdAt))}
+            {formatDistanceToNow(new Date(notification.createdAt), {
+              locale: zhCN
+            })}
           </Typography>
         }
       />
