@@ -15,3 +15,9 @@ github demo : https://github.com/PDFTron/pdf-in-react
 # wasm 支持
 
 1. 安装`yarn add wasm-loader`
+
+# 下拉框选择控件
+
+`multiselect-react-dropdown`
+
+1.安装`yarn add multiselect-react-dropdown`

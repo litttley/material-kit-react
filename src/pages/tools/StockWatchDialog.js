@@ -20,6 +20,7 @@ import {
   Paper
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { makeStyles } from '@mui/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -119,7 +120,14 @@ const Item = styled('div')(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(0.5, 1)
+  }
+}));
+
 export default function StockWatchDialog(props) {
+  const classes = useStyles();
   const navigate = useNavigate();
   const { id, refPrice, title, type, closed, prevPrice, dialogRef } = props;
   const [open, setOpen] = React.useState(false);
@@ -265,8 +273,8 @@ export default function StockWatchDialog(props) {
 
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        股价监听
+      <Button variant="outlined" className={classes.root} onClick={handleClickOpen}>
+        监听设置
       </Button>
       <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose2}>

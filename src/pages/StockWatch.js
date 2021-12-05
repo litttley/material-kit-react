@@ -19,8 +19,12 @@ import {
   TablePagination,
   Paper
 } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import Multiselect from 'multiselect-react-dropdown';
+import { Icon } from '@iconify/react';
+import plusFill from '@iconify/icons-eva/plus-fill';
 import Page from '../components/Page';
 import PageUtils from './tools/PageUtils';
 import CustomizedSnackbars from '../utils/CustomizedSnackbars';
@@ -30,7 +34,8 @@ import UserListHead from './tools/PageTableHead';
 import StockWatchDialog from './tools/StockWatchDialog';
 
 import SearchNotFound from '../components/SearchNotFound';
-import ViewEditToolBar from '../components/ViewEditToolBar';
+import StockWatchViewEditToolBar from './tools/StockWatchViewEditToolBar';
+import '../css/multiselect-override.css';
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -79,6 +84,7 @@ const IOSSwitch = styled((props) => (
     })
   }
 }));
+
 function StockWatch(props) {
   const navigate = useNavigate();
   const tableHead = [
@@ -104,6 +110,10 @@ function StockWatch(props) {
   const [refrush2, setRefrush2] = useState(0);
   const [count, setCount] = useState(0);
   const [stockWatchLabel, setStockWatchLabel] = useState('否');
+
+  // 搜索查询
+  const [muiOption, setMuiOption] = useState([]);
+  const [muiSelect, setMuiSelect] = useState([]);
   // const dialogRef = React.useRef();
   const dialogRef = () => {
     setRefrush(!refrush);
@@ -180,6 +190,49 @@ function StockWatch(props) {
       });
   };
 
+  const searchStockCN = (value) => {
+    axios
+      .post('/stockWatch/codeCnList', {
+        searchValue: value
+      })
+      .then((response) => {
+        if (response.data.code === 200) {
+          console.log('.....');
+          const dataArray = response.data.data;
+          if (dataArray.length === 0) {
+            console.log('ppp');
+
+            setMuiOption([]);
+          } else {
+            const newArray = dataArray.map((data) => ({
+              id: data.code,
+              codeName: data.codeName,
+              name: `${data.codeName} ${data.code}`
+            }));
+            setMuiOption(newArray);
+          }
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
   const changeStockTradeFlag = (flag, refStcokWatchId) => {
     axios
       .post('/stockTrade/save', {
@@ -232,12 +285,59 @@ function StockWatch(props) {
       });
   };
 
-  const refreshPage = (type) => {
-    if (type) {
-      console.log(1);
-    } else {
-      console.log(1);
-    }
+  const onMuiSave = () => {
+    axios
+      .post('/stockWatch/selfSave', {
+        codes: muiSelect
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          setRefrush(!refrush);
+          snackBarToasr(snackRef, {
+            message: '添加成功',
+            severity: 'success',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+        } else {
+          setRefrush(!refrush);
+          snackBarToasr(snackRef, {
+            message: response.data.msg,
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        if (
+          error.response !== null &&
+          error.response !== undefined &&
+          error.response.status === 401
+        ) {
+          snackBarToasr(snackRef, {
+            message: '密码过期请重新登录!',
+            severity: 'error',
+            anchorOrigin: {
+              // 位置
+              vertical: 'top',
+              horizontal: 'center'
+            }
+          });
+          setTimeout(() => navigate('/login', { replace: true }), 1000);
+        }
+      });
+  };
+
+  const refreshPage = () => {
+    setRefrush(!refrush);
   };
 
   // 查询列表
@@ -296,6 +396,24 @@ function StockWatch(props) {
     changeStockTradeFlag(flag, stockWatchId);
   };
   const isUserNotFound = dataList.length === 0;
+
+  const onMuiSelectEvent = (selectedList, selectedItem) => {
+    console.log('onMuiSelectEvent...');
+    const newArray = selectedList.map((data) => ({ code: data.id, codeName: data.codeName }));
+    setMuiSelect(newArray);
+  };
+  const onMuiRemoveEvent = (selectedList, removedItem) => {
+    const newArray = selectedList.map((data) => ({ code: data.id, codeName: data.codeName }));
+    setMuiSelect(newArray);
+  };
+  const onMuiSearch = (value) => {
+    console.log('onMuiSearch...');
+    searchStockCN(value);
+  };
+  const onMuiSaveClick = () => {
+    onMuiSave();
+  };
+
   return (
     <>
       <Page title="股票监听">
@@ -312,6 +430,25 @@ function StockWatch(props) {
               filterName={filterName}
               onFilterName={handleFilterByName}
             />
+            <Stack direction="row" justifyContent="flex-start">
+              <Multiselect
+                placeholder="搜索选择要添加的股票"
+                options={muiOption} // Options to display in the dropdown
+                onSelect={onMuiSelectEvent}
+                onRemove={onMuiRemoveEvent}
+                onSearch={onMuiSearch}
+                emptyRecordMsg="没有相应的股票"
+                displayValue="name" // Property name to display in the dropdown options
+              />
+              <Button
+                // variant="outlined"
+                onClick={onMuiSaveClick}
+                startIcon={<Icon icon={plusFill} />}
+              >
+                添加
+              </Button>
+            </Stack>
+
             <Scrollbar>
               <TableContainer sx={{ minWidth: 960 }}>
                 <Table>
@@ -407,7 +544,7 @@ function StockWatch(props) {
                             />
                           </TableCell>
                           <TableCell align="right">
-                            <ViewEditToolBar id={id} refresh={refreshPage} />
+                            <StockWatchViewEditToolBar id={id} refresh={refreshPage} />
                           </TableCell>
                         </TableRow>
                       );

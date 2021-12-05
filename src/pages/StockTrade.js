@@ -29,7 +29,7 @@ import UserListHead from './tools/PageTableHead';
 import StockTradeDialog from './tools/StockTradeDialog';
 
 import SearchNotFound from '../components/SearchNotFound';
-import ViewEditToolBar from '../components/ViewEditToolBar';
+import StockTradeViewEditToolBar from './tools/StockTradeViewEditToolBar';
 
 function StockTrade(props) {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ function StockTrade(props) {
   const [refrush, setRefrush] = useState(false);
   const [refrush2, setRefrush2] = useState(0);
   const [count, setCount] = useState(0);
-  const [stockTradeLabel, setStockTradeLabel] = useState('否');
+
   // const dialogRef = React.useRef();
   const dialogRef = () => {
     setRefrush(!refrush);
@@ -129,12 +129,8 @@ function StockTrade(props) {
       });
   };
 
-  const refreshPage = (type) => {
-    if (type) {
-      console.log(1);
-    } else {
-      console.log(1);
-    }
+  const refreshPage = () => {
+    setRefrush(!refrush);
   };
 
   // 查询列表
@@ -284,7 +280,7 @@ function StockTrade(props) {
                             />
                           </TableCell>
                           <TableCell align="right">
-                            <ViewEditToolBar id={id} refresh={refreshPage} />
+                            <StockTradeViewEditToolBar id={id} refresh={refreshPage} />
                           </TableCell>
                         </TableRow>
                       );
