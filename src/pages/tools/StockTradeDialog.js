@@ -151,6 +151,12 @@ export default function StockTradeDialog(props) {
     setOpen(true);
   };
   const handleClose = () => {
+    if (inputPriceVaild) {
+      return;
+    }
+    if (inputPercentVaild) {
+      return;
+    }
     setOpen(false);
     changeStockWatchFlag();
     dialogRef();
@@ -225,7 +231,7 @@ export default function StockTradeDialog(props) {
 
   const priceOnChange = (event) => {
     const changePrice = event.target.value;
-    const reg = new RegExp('^[0-9]+(.[0-9]{2})?$');
+    const reg = new RegExp('^[0-9]+.[0-9]{2}$');
     if (!reg.test(changePrice)) {
       setInputPriceVaild(true);
     } else {
